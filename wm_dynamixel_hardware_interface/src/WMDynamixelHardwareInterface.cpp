@@ -22,6 +22,7 @@ namespace wm_dynamixel_hardware_interface {
         Offset = 0;
 		Id = 0;
         resolution = 4096;
+        direction = 1;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -59,7 +60,8 @@ namespace wm_dynamixel_hardware_interface {
         std::vector<double> vec = {
                 double(Id),
                 Offset,
-                resolution
+                resolution,
+                direction
         };
         msg.layout.dim.push_back( std_msgs::MultiArrayDimension() );
         msg.layout.dim[0].size = (uint)vec.size();
@@ -77,18 +79,17 @@ namespace wm_dynamixel_hardware_interface {
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
-        if ( oldCmd != cmd && cmd < 1 && cmd > -1) {
-            if (cmd > 0.000001 || cmd < -0.000001){ cmd = 0; }
+        // Eliminate impossible commands
+        if (!( cmd < 30 && cmd > -30) || (cmd > 0.000001 && cmd < -0.000001)){ cmd = 0; }
 
-            std_msgs::Float64MultiArray msg;
-            msg.data.push_back(double(Id));
-            msg.data.push_back(cmd);
-            msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-            msg.layout.dim[0].size = 2;
-            msg.layout.dim[0].stride = 1;
-            msg.layout.dim[0].label = "";
-            CtrlPub.publish(msg);
-        }
+        std_msgs::Float64MultiArray msg;
+        msg.data.push_back(double(Id));
+        msg.data.push_back(cmd);
+        msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+        msg.layout.dim[0].size = 2;
+        msg.layout.dim[0].stride = 1;
+        msg.layout.dim[0].label = "";
+        CtrlPub.publish(msg);
         oldCmd = cmd;
 	}
 
