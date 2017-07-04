@@ -65,6 +65,7 @@ Tout les topics utilisent le message ros standard [`Float64MultiArray`](http://d
 |          0         |          ID du dynamixel         |                     ID du dynamixel                     |                         ID du dynamixel                         |
 |          1         |        Offset du dynamixel       |                Nouvelle vitesse *[rad/s]*               |                       Angle actuel *[rad]*                      |
 |          2         |      Resolution du dynamixel     |                           */*                           |                               */*                               |
+|          3         |       Direction du dynamixel     |                           */*                           |                               */*                               |
 
 ## Credits
 

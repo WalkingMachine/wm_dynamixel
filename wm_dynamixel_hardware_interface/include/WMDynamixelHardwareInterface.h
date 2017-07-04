@@ -46,6 +46,7 @@ namespace wm_dynamixel_hardware_interface
         double Offset;
         double resolution;
         double oldCmd;
+        int direction;
 
     };
 }

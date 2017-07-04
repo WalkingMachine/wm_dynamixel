@@ -87,19 +87,20 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
 	int ID = (int)msg->data[0];
 	double offset = msg->data[1];
 	int resolution = (int)msg->data[2];
+	int direction = (int)msg->data[3];
 
 	ROS_INFO("Try to add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
 			//ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-			dynamixelArray[index].updateDynamixel(ID, offset, resolution);
+			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction);
 			break;
 		}
 	}
 
 	//ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution));
+	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction));
 }
 
 bool InitPort(const char *PortName, int BaudRate) {
