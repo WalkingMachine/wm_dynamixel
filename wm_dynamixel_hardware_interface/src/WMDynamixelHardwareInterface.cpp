@@ -22,6 +22,7 @@ namespace wm_dynamixel_hardware_interface {
         Offset = 0;
 		Id = 0;
         resolution = 4096;
+        direction = 1;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -30,7 +31,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
         Name = Joints[0];
-		
+        oldCmd = 0;
 
 		// Initialise interface variables
 		cmd = 0;	//command
@@ -51,13 +52,16 @@ namespace wm_dynamixel_hardware_interface {
         StatSub = nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
 
         // Wait wor the universe to get ready for our greatness!
-        sleep(2);
+        ros::spinOnce();
+        sleep(1);
+        ros::spinOnce();
         ROS_INFO( "Dynamixel initialising" );
         std_msgs::Float64MultiArray msg;
         std::vector<double> vec = {
                 double(Id),
                 Offset,
-                resolution
+                resolution,
+                direction
         };
         msg.layout.dim.push_back( std_msgs::MultiArrayDimension() );
         msg.layout.dim[0].size = (uint)vec.size();
@@ -75,17 +79,25 @@ namespace wm_dynamixel_hardware_interface {
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
+        // Eliminate impossible commands
+        if (!( cmd < 30 && cmd > -30) || (cmd > 0.000001 && cmd < -0.000001)){ cmd = 0; }
+
         std_msgs::Float64MultiArray msg;
-        msg.data.push_back( double(Id) );
-        msg.data.push_back( cmd );
-        CtrlPub.publish( msg );
+        msg.data.push_back(double(Id));
+        msg.data.push_back(cmd);
+        msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+        msg.layout.dim[0].size = 2;
+        msg.layout.dim[0].stride = 1;
+        msg.layout.dim[0].label = "";
+        CtrlPub.publish(msg);
+        oldCmd = cmd;
 	}
 
 	void WMDynamixelHardwareInterface::StatusCB( std_msgs::Float64MultiArrayConstPtr msg ){
 		if ( Id == (int)msg->data[0] ){
 			pos = msg->data[1];
-			vel = msg->data[2];
-			eff = msg->data[3];
+			//vel = msg->data[2];
+			//eff = msg->data[3];
 		}
 	}
 

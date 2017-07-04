@@ -3,8 +3,8 @@
 //
 
 #include "WMDynamixel.h"
-WMDynamixel::WMDynamixel(int Id, double offset, int resolution) {
-	updateDynamixel(Id, offset, resolution);
+WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction) {
+	updateDynamixel(Id, offset, resolution, direction);
 }
 
 void WMDynamixel::initDynamixel() {
@@ -38,6 +38,9 @@ void WMDynamixel::initDynamixel() {
 //	while(pos > goal+2 || pos < goal-2);
 
 
+    oldPosition = 0;
+    oldVelocity = 0;
+
 	//set speed to 0
 	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 0);
 	usleep(DELAY);
@@ -51,6 +54,15 @@ void WMDynamixel::initDynamixel() {
 }
 
 bool WMDynamixel::setVelocity(double newVelocity) {
+	// Limit acceleration
+//    double dV1 = newVelocity-oldVelocity;
+//    double dV2 = dV1*((dV1 > 0) ? 1 : -1);
+//	if ( dV2 > MAX_ACCELERATION ){
+//		newVelocity = oldVelocity+MAX_ACCELERATION/dV1;
+//	}
+//    newVelocity = (oldPosition>MAX_POSITION && newVelocity>0) ? 0 : newVelocity;
+//    newVelocity = (oldPosition<MIN_POSITION && newVelocity<0) ? 0 : newVelocity;
+	oldVelocity = newVelocity;
 	//read and calculate new velocity
 	int iVelocity = (int) (newVelocity * 325.631013566);
 	if (iVelocity < 0) {
@@ -76,41 +88,26 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
 
 		//test watchdog
 		watchdogMgr();
-
 		msg.data.push_back((double) _ID);
-
 		usleep(DELAY);
-		msg.data.push_back(_coefficient * read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error));
+        double newPosition = _direction*_coefficient * read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error) - _offset;
+        double dP = newPosition-oldPosition;
+        //if ( dP < MAX_DELTA_POSITION && dP > -MAX_DELTA_POSITION ) {
+            msg.data.push_back(newPosition);
+            if (dxl_error) {
+                ROS_ERROR("Error reading position");
+                return false;
+            }
+            usleep(DELAY);
+            msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+            msg.layout.dim[0].size = (uint) msg.data.size();
+            msg.layout.dim[0].stride = 1;
+            msg.layout.dim[0].label = "";
 
-		if (dxl_error) {
-			ROS_ERROR("Error reading position");
-			return false;
-		}
-		usleep(DELAY);
-//		int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
-//		if (dxl_error) {
-//			ROS_ERROR("Error reading speed");
-//			return false;
-//		}
-//		usleep(DELAY);
-//		if (iSpeed >= 1024) {
-//			iSpeed = -iSpeed + 1024;
-//		}
-//		msg.data.push_back((double) iSpeed / 325.631013566);
-//		msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
-//		if (dxl_error) {
-//			ROS_ERROR("Error reading load");
-//			return false;
-//		}
-//		usleep(DELAY);
-
-		msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-		msg.layout.dim[0].size = (uint) msg.data.size();
-		msg.layout.dim[0].stride = 1;
-		msg.layout.dim[0].label = "";
-
-		//publish values
-		pub.publish(msg);
+            //publish values
+            pub.publish(msg);
+        //}
+        oldPosition = newPosition;
 	}
 	return true;
 }
@@ -119,11 +116,12 @@ int WMDynamixel::getID(){
 	return _ID;
 }
 
-void WMDynamixel::updateDynamixel(int Id, double offset, int resolution) {
+void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction) {
 	_ID = Id;
 	_isEnable = false;
 	_offset = offset;
 	_coefficient = (2 * PI) / resolution;
+    _direction = direction;
 	//ROS_INFO("Dynamixel added with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
 	initDynamixel();
 	_isEnable = true;

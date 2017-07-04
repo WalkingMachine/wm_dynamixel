@@ -11,6 +11,10 @@
 #define PI 3.1415926535897932
 #define DELAY 100000		//us
 #define WATCHDOG 500	//ms
+#define MAX_ACCELERATION 0.2  //rad/cycle
+#define MAX_DELTA_POSITION 0.2  //rad/cycle
+#define MAX_POSITION 80/180*PI  //rad/cycle
+#define MIN_POSITION -80/180*PI  //rad/cycle
 
 class WMDynamixel {
 public:
@@ -20,14 +24,14 @@ public:
      * @param offset
      * @param resolution
      */
-	WMDynamixel(int Id, double offset, int resolution);
+	WMDynamixel(int Id, double offset, int resolution, int direction);
     /**
      *  Update dynamixel parameters
      * @param Id
      * @param offset
      * @param resolution
      */
-	void updateDynamixel(int Id, double offset, int resolution);
+	void updateDynamixel(int Id, double offset, int resolution, int direction);
 
 	/**
 	 * Send a new velocity to the dynamixel (in Rad)
@@ -58,6 +62,9 @@ private:
 	
 	//initial position of dynamixel
 	double _offset;
+
+    // direction of rotation
+    int _direction;
 	
 	//number of positions for 2Pi Rad in dynamixel
     double _coefficient;
@@ -70,6 +77,13 @@ private:
 
     //test if watchdog is
     bool watchdogMgr();
+
+	// buffer to limit acceleration
+	double oldVelocity;
+
+    // buffer to filter position
+    double oldPosition;
+
 };
 
 #endif //PROJECT_WMDYNAMIXEL_H
