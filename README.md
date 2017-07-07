@@ -55,6 +55,17 @@ roslaunch wm_dynamixel_node wm_dynamixel_node.launch
 - Lire la position des dynamixels sur le topic `dynamixel_pos`.
 
 
+## Configuration YAML
+```shell
+HARDWARE_NAME:
+  type: wm_dynamixel_hardware_interface/WMDynamixelHardwareInterface
+  joints:
+    - HARDWARE_NAME
+  id: DYNAMIXEL_ID
+  offset: OFFSET
+  direction: DIRECTION
+```
+
 ## Topics 
 
 Tout les topics utilisent le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
