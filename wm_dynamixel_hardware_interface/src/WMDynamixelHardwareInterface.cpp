@@ -23,6 +23,7 @@ namespace wm_dynamixel_hardware_interface {
 		Id = 0;
         resolution = 4096;
         direction = 1;
+        simulation = false;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -30,6 +31,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("offset", Offset);
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
+        robot_hw_nh.getParam("simulation", simulation);
         Name = Joints[0];
         oldCmd = 0;
 
@@ -45,52 +47,58 @@ namespace wm_dynamixel_hardware_interface {
 		registerInterface(&joint_state_interface_);
 		registerInterface(&joint_velocity_interface_);
 
-		// advertise publisher
-        CtrlPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_cmd", 10);
-        InitPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_init", 10);
-		//GripperStatSub.
-        StatSub = nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
+        if (!simulation) {
+            // advertise publisher
+            CtrlPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_cmd", 10);
+            InitPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_init", 10);
+            //GripperStatSub.
+            StatSub = nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
 
-        // Wait wor the universe to get ready for our greatness!
-        ros::spinOnce();
-        sleep(1);
-        ros::spinOnce();
-        ROS_INFO( "Dynamixel initialising" );
-        std_msgs::Float64MultiArray msg;
-        std::vector<double> vec = {
-                double(Id),
-                Offset,
-                resolution,
-                direction
-        };
-        msg.layout.dim.push_back( std_msgs::MultiArrayDimension() );
-        msg.layout.dim[0].size = (uint)vec.size();
-        msg.layout.dim[0].stride = 1;
-        msg.layout.dim[0].label = "";
+            // Wait wor the universe to get ready for our greatness!
+            ros::spinOnce();
+            sleep(1);
+            ros::spinOnce();
+            ROS_INFO("Dynamixel initialising");
+            std_msgs::Float64MultiArray msg;
+            std::vector<double> vec = {
+                    double(Id),
+                    Offset,
+                    resolution,
+                    direction
+            };
+            msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+            msg.layout.dim[0].size = (uint) vec.size();
+            msg.layout.dim[0].stride = 1;
+            msg.layout.dim[0].label = "";
 
-        //msg.layout = std_msgs::MultiArrayLayout();
-        msg.data.insert( msg.data.end(), vec.begin(), vec.end() );
-        InitPub.publish( msg );
-        ROS_INFO( "Dynamixel initialised" );
+            //msg.layout = std_msgs::MultiArrayLayout();
+            msg.data.insert(msg.data.end(), vec.begin(), vec.end());
+            InitPub.publish(msg);
+            ROS_INFO("Dynamixel initialised");
+        }
 		return true;
 	}
 	
 	void WMDynamixelHardwareInterface::read(const ros::Time &time, const ros::Duration &period) {
+        if (simulation)
+            pos += cmd/30;
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
         // Eliminate impossible commands
         if (!( cmd < 30 && cmd > -30) || (cmd > 0.000001 && cmd < -0.000001)){ cmd = 0; }
 
-        std_msgs::Float64MultiArray msg;
-        msg.data.push_back(double(Id));
-        msg.data.push_back(cmd);
-        msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-        msg.layout.dim[0].size = 2;
-        msg.layout.dim[0].stride = 1;
-        msg.layout.dim[0].label = "";
-        CtrlPub.publish(msg);
-        oldCmd = cmd;
+        if (!simulation) {
+            std_msgs::Float64MultiArray msg;
+            msg.data.push_back(double(Id));
+            msg.data.push_back(cmd);
+            msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+            msg.layout.dim[0].size = 2;
+            msg.layout.dim[0].stride = 1;
+            msg.layout.dim[0].label = "";
+            CtrlPub.publish(msg);
+            oldCmd = cmd;
+        }
 	}
 
 	void WMDynamixelHardwareInterface::StatusCB( std_msgs::Float64MultiArrayConstPtr msg ){
