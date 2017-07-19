@@ -34,24 +34,34 @@ public:
 	void updateDynamixel(int Id, double offset, int resolution, int direction);
 
 	/**
-	 * Send a new velocity to the dynamixel (in Rad)
+	 * Send a new velocity to the dynamixel (in Rad/s)
 	 * @param newVelocity
 	 * @return true if OK
 	 */
 	bool setVelocity(double newVelocity);
+
+	/**
+	 * Send a new position to the dynamixel (in Rad)
+	 * @param newPosition
+	 * @return true if OK
+	 */
+	bool setPosition(double newPosition);
 
     /**
      * Publish new dynamixel's position, velocity and load in a topic
      * @param pub
      * @return true if OK
      */
-    bool publishPosition(ros::Publisher pub);
+	bool publishPosition(ros::Publisher pub);
 
     /**
      *
      * @return getter for ID
      */
-    int getID();
+	int getID();
+
+	// int control mode ( 0=velocity, 1=position )
+	int mode;
 	
 private:
 	//id of material dynamixel

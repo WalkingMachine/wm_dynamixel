@@ -24,6 +24,7 @@ namespace wm_dynamixel_hardware_interface {
         resolution = 4096;
         direction = 1;
         simulation = false;
+        int mode = 0;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -31,6 +32,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("offset", Offset);
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
+        robot_hw_nh.getParam("mode", mode);
         robot_hw_nh.getParam("simulation", simulation);
         Name = Joints[0];
         oldCmd = 0;
@@ -64,7 +66,8 @@ namespace wm_dynamixel_hardware_interface {
                     double(Id),
                     Offset,
                     resolution,
-                    direction
+                    direction,
+                    mode
             };
             msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
             msg.layout.dim[0].size = (uint) vec.size();
