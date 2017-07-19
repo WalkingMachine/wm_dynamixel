@@ -3,8 +3,8 @@
 //
 
 #include "WMDynamixel.h"
-WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction) {
-	updateDynamixel(Id, offset, resolution, direction);
+WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction, int mode ) {
+	updateDynamixel(Id, offset, resolution, direction, mode );
 }
 
 void WMDynamixel::initDynamixel() {

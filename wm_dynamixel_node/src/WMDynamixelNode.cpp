@@ -76,10 +76,10 @@ void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
 	int ID = (int)msg->data[0];
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
-			if ( dynamixelArray[index].mode == 0 ){
+			if ( dynamixelArray[index]._mode == 0 ){
 				dynamixelArray[index].setVelocity(msg->data[1]);
 				break;
-			} else if ( dynamixelArray[index].mode == 1 ) {
+			} else if ( dynamixelArray[index]._mode == 1 ) {
 				dynamixelArray[index].setPosition(msg->data[1]);
 				break;
 			}
@@ -99,13 +99,13 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
 			//ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction);
+			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction, mode);
 			break;
 		}
 	}
 
 	//ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction));
+	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction, mode));
 }
 
 bool InitPort(const char *PortName, int BaudRate) {

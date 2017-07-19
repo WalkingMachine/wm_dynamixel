@@ -24,14 +24,14 @@ public:
      * @param offset
      * @param resolution
      */
-	WMDynamixel(int Id, double offset, int resolution, int direction);
+	WMDynamixel(int Id, double offset, int resolution, int direction, int mode);
     /**
      *  Update dynamixel parameters
      * @param Id
      * @param offset
      * @param resolution
      */
-	void updateDynamixel(int Id, double offset, int resolution, int direction);
+	void updateDynamixel(int Id, double offset, int resolution, int direction, int mode);
 
 	/**
 	 * Send a new velocity to the dynamixel (in Rad/s)
@@ -61,7 +61,7 @@ public:
 	int getID();
 
 	// int control mode ( 0=velocity, 1=position )
-	int mode;
+	int _mode;
 	
 private:
 	//id of material dynamixel
