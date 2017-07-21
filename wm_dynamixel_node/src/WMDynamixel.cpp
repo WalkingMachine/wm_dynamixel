@@ -35,7 +35,7 @@ void WMDynamixel::initDynamixel() {
 bool WMDynamixel::setVelocity(double newVelocity) {
 	oldVelocity = newVelocity;
 	//read and calculate new velocity
-	int iVelocity = (int) (newVelocity * 325.631013566);
+	int iVelocity = (int) (newVelocity * 83.765759522);
 	if (iVelocity < 0) {
 		iVelocity = 1023 - iVelocity;
 	}
@@ -54,10 +54,13 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 bool WMDynamixel::setPosition(double newPosition) {
 	//read and calculate new velocity
-	int iPosition = (int) ((newPosition+_offset)*_direction/_coefficient);
-
+	int iPosition = (int) ((newPosition+_offset)*_direction*83.765759522);
+    if (iPosition < 0) {
+        iPosition = 0;
+    }
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
+        ROS_ERROR("error while sending position to dynamixel");
 		return false;
 	}
 
