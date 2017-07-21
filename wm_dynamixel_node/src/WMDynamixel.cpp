@@ -48,7 +48,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 bool WMDynamixel::setPosition(double newPosition) {
 	//read and calculate new velocity
-	int iPosition = (int) (newPosition * 325.631013566);
+	int iPosition = (int) ((newPosition+_offset)*_direction/_coefficient);
 
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
