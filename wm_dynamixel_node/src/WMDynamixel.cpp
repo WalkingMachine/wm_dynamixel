@@ -19,9 +19,15 @@ void WMDynamixel::initDynamixel() {
 	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 0);
 	usleep(DELAY);
 
-	//Set WHEEL mode
-	write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
-	write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
+    if ( _mode == 0 ) {
+        //Set WHEEL mode
+        write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
+        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
+    } else if ( _mode == 1 ){
+        //Set WHEEL mode
+        write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, _resolution );
+        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
+    }
 
 	usleep(DELAY);
 }
@@ -102,6 +108,7 @@ void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int dir
 	_isEnable = false;
 	_offset = offset;
 	_coefficient = (2 * PI) / resolution;
+    _resolution = resolution;
     _direction = direction;
 	//ROS_INFO("Dynamixel added with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
 	initDynamixel();

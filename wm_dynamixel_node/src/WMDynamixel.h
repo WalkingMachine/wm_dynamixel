@@ -79,6 +79,9 @@ private:
 	//number of positions for 2Pi Rad in dynamixel
     double _coefficient;
 
+	//number of positions for 2Pi Rad in dynamixel
+	int _resolution;
+
     //last write time
 	unsigned long  _watchdog;
 
