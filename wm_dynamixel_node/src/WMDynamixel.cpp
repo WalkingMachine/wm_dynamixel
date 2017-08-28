@@ -62,6 +62,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 //	}
 //    newVelocity = (oldPosition>MAX_POSITION && newVelocity>0) ? 0 : newVelocity;
 //    newVelocity = (oldPosition<MIN_POSITION && newVelocity<0) ? 0 : newVelocity;
+	newVelocity *= _direction;
 	oldVelocity = newVelocity;
 	//read and calculate new velocity
 	int iVelocity = (int) (newVelocity * 325.631013566);
