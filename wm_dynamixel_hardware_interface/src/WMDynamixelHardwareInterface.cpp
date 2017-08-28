@@ -32,6 +32,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
         robot_hw_nh.getParam("simulation", simulation);
+        robot_hw_nh.getParam("direction", direction);
         Name = Joints[0];
         oldCmd = 0;
 
