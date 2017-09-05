@@ -42,6 +42,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
+		ROS_ERROR("error while sending velocity to dynamixel: ID=%", _ID );
 		return false;
 	}
 
@@ -60,7 +61,7 @@ bool WMDynamixel::setPosition(double newPosition) {
     }
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
-        ROS_ERROR("error while sending position to dynamixel");
+        ROS_ERROR("error while sending position to dynamixel: ID=%\", _ID ");
 		return false;
 	}
 
