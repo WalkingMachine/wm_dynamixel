@@ -35,7 +35,7 @@ void WMDynamixel::initDynamixel() {
 bool WMDynamixel::setVelocity(double newVelocity) {
 	oldVelocity = newVelocity;
 	//read and calculate new velocity
-	int iVelocity = (int) (newVelocity * 83.765759522);
+	int iVelocity = (int) (newVelocity * 325.631013566);
 	if (iVelocity < 0) {
 		iVelocity = 1023 - iVelocity;
 	}
@@ -85,7 +85,7 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
         //if ( dP < MAX_DELTA_POSITION && dP > -MAX_DELTA_POSITION ) {
             msg.data.push_back(newPosition);
             if (dxl_error) {
-                ROS_ERROR("Error reading position");
+                ROS_ERROR("Error reading position of dynamixel: ID=%d", _ID);
                 return false;
             }
             usleep(DELAY);
