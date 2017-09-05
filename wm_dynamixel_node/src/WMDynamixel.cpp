@@ -96,7 +96,7 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
         //if ( dP < MAX_DELTA_POSITION && dP > -MAX_DELTA_POSITION ) {
             msg.data.push_back(newPosition);
             if (dxl_error) {
-                ROS_WARN("Error reading position of dynamixel: ID=%d", _ID);
+                ROS_ERROR("Error reading position of dynamixel: ID=%d", _ID);
                 return false;
             }
             usleep(DELAY);
