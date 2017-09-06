@@ -42,7 +42,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
-		ROS_ERROR("error while sending velocity to dynamixel: ID=%d", _ID );
+		ROS_WARN("Couldn't send velocity command to dynamixel: ID=%d", _ID );
 		return false;
 	}
 
@@ -64,7 +64,7 @@ bool WMDynamixel::setPosition(double newPosition) {
 //	}
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
-        ROS_ERROR("error while sending position to dynamixel: ID=%d", _ID);
+        ROS_WARN("Couldn't send position command to dynamixel: ID=%d", _ID);
 		return false;
 	}
 
@@ -89,7 +89,7 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
         //if ( dP < MAX_DELTA_POSITION && dP > -MAX_DELTA_POSITION ) {
             msg.data.push_back(newPosition);
             if (dxl_error) {
-                ROS_ERROR("Error reading position of dynamixel: ID=%d", _ID);
+                ROS_WARN("Couldn't read position of dynamixel: ID=%d", _ID);
                 return false;
             }
             usleep(DELAY);
