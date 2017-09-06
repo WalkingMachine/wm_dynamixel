@@ -44,16 +44,17 @@ namespace wm_dynamixel_hardware_interface {
 		vel = 0;    //velocity
 		eff = 0;    //effort
 
-		// Register interfaces
-		joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
-        joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
+        // Register interfaces
+        joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
         registerInterface(&joint_state_interface_);
         if ( mode == 0 ){
             ROS_INFO("registering dynamixel joint_velocity_interface: ID=%d", Id);
+            joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
             registerInterface(&joint_velocity_interface_);
         }
         if ( mode == 1 ){
             ROS_INFO("registering dynamixel joint_position_interface: ID=%d", Id);
+            joint_position_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
             registerInterface(&joint_position_interface_);
         }
 
