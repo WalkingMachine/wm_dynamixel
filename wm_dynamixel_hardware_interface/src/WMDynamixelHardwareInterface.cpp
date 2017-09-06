@@ -48,10 +48,14 @@ namespace wm_dynamixel_hardware_interface {
 		joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
         joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
         registerInterface(&joint_state_interface_);
-        if ( mode == 0 )
+        if ( mode == 0 ){
+            ROS_INFO("registering dynamixel joint_velocity_interface: ID=%d", Id);
             registerInterface(&joint_velocity_interface_);
-        if ( mode == 1 )
+        }
+        if ( mode == 1 ){
+            ROS_INFO("registering dynamixel joint_position_interface: ID=%d", Id);
             registerInterface(&joint_position_interface_);
+        }
 
         if (!simulation) {
             // advertise publisher
