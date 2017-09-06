@@ -56,12 +56,12 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 bool WMDynamixel::setPosition(double newPosition) {
 	//read and calculate new velocity
 	int iPosition = (int) ((newPosition+_offset)*_direction*83.765759522);
-    if (iPosition < 0) {
+//    if (iPosition < 0) {
         iPosition = 0;
-    }
-	if (iPosition > 1023 ) {
-		iPosition = 1023;
-	}
+//    }
+//	if (iPosition > 1023 ) {
+//		iPosition = 1023;
+//	}
 	//write velocity in dynamixel
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
         ROS_ERROR("error while sending position to dynamixel: ID=%d", _ID);

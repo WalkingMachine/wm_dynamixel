@@ -46,9 +46,12 @@ namespace wm_dynamixel_hardware_interface {
 
 		// Register interfaces
 		joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
-		joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
-		registerInterface(&joint_state_interface_);
-		registerInterface(&joint_velocity_interface_);
+        joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
+        registerInterface(&joint_state_interface_);
+        if ( mode == 0 )
+            registerInterface(&joint_velocity_interface_);
+        if ( mode == 1 )
+            registerInterface(&joint_position_interface_);
 
         if (!simulation) {
             // advertise publisher
