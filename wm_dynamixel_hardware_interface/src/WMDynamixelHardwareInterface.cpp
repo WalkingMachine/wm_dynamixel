@@ -9,6 +9,7 @@ namespace wm_dynamixel_hardware_interface {
 
 
     hardware_interface::VelocityJointInterface WMDynamixelHardwareInterface::joint_velocity_interface_;
+    hardware_interface::PositionJointInterface WMDynamixelHardwareInterface::joint_position_interface_;
     hardware_interface::JointStateInterface    WMDynamixelHardwareInterface::joint_state_interface_;
 
 // << ---- H I G H   L E V E L   I N T E R F A C E ---- >>
@@ -24,7 +25,7 @@ namespace wm_dynamixel_hardware_interface {
         resolution = 4096;
         direction = 1;
         simulation = false;
-        int mode = 0;
+        mode = 0;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -92,8 +93,12 @@ namespace wm_dynamixel_hardware_interface {
 	}
 	
 	void WMDynamixelHardwareInterface::read(const ros::Time &time, const ros::Duration &period) {
-        if (simulation)
-            pos += cmd/30;
+        if (simulation) {
+            if ( mode == 0 )
+                pos += cmd / 30;
+            if ( mode == 1 )
+                pos = cmd;
+        }
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {

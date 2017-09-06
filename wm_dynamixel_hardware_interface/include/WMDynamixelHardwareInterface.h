@@ -49,6 +49,7 @@ namespace wm_dynamixel_hardware_interface
         double oldCmd;
         int direction;
         bool simulation;
+        int mode;
     };
 }
 #endif //PROJECT_WMDynamixelHardwareInterface_H
