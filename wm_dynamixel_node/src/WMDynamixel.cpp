@@ -27,6 +27,7 @@ void WMDynamixel::initDynamixel() {
         //Set WHEEL mode
         write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0 );
         write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 1023);
+        write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 100);
     }
 
 	usleep(DELAY);
