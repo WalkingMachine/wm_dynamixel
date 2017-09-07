@@ -10,7 +10,7 @@
 
 #define PI 3.1415926535897932
 #define DELAY 100000		//us
-#define WATCHDOG 500	//ms
+#define WATCHDOG 1000	//ms
 #define MAX_ACCELERATION 0.2  //rad/cycle
 #define MAX_DELTA_POSITION 0.2  //rad/cycle
 #define MAX_POSITION 80/180*PI  //rad/cycle

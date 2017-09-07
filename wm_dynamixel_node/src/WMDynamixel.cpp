@@ -25,8 +25,8 @@ void WMDynamixel::initDynamixel() {
         write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
     } else if ( _mode == 1 ){
         //Set WHEEL mode
-        write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, _resolution );
-        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
+        write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0 );
+        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 1023);
     }
 
 	usleep(DELAY);
