@@ -3,17 +3,14 @@
 //
 
 #include "WMDynamixel.h"
-WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction, int mode ) {
-	updateDynamixel(Id, offset, resolution, direction, mode );
+WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed ) {
+	updateDynamixel(Id, offset, resolution, direction, mode, ratio, maxSpeed );
 }
 
 void WMDynamixel::initDynamixel() {
 	ROS_INFO("//set TORQUE to ON");
 	write1BDynamixel(_ID, ADDR_P1_TORQUE_ENABLE, 1);
 	usleep(DELAY);
-
-    oldPosition = 0;
-    oldVelocity = 0;
 
 	//set speed to 0
 	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 0);
@@ -26,14 +23,13 @@ void WMDynamixel::initDynamixel() {
     } else if ( _mode == 1 ){
         //Set WHEEL mode
         write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0 );
-        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 1023);
+        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, _resolution);
     }
 
 	usleep(DELAY);
 }
 
 bool WMDynamixel::setVelocity(double newVelocity) {
-	oldVelocity = newVelocity;
 	//read and calculate new velocity
 	int iVelocity = (int) (newVelocity * 325.631013566);
 	if (iVelocity < 0) {
@@ -55,15 +51,15 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 bool WMDynamixel::setPosition(double newPosition) {
 	//read and calculate new velocity
-    int iPosition = (int) ((newPosition)*_direction*162.815644308+511);
+    int iPosition = (int) ((newPosition/_ratio*_direction+_offset)*_resolution/6.283185307);
     if (iPosition < 0) {
-		iPosition += 1023;
+		iPosition += _resolution;
     }
-	if (iPosition > 1023 ) {
-		iPosition -= 1023;
+	if (iPosition > _resolution ) {
+		iPosition -= _resolution;
 	}
 	//write velocity in dynamixel
-	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 80);
+	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, _maxSpeed);
 	usleep(DELAY);
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
         ROS_WARN("Couldn't send position command to dynamixel: ID=%d", _ID);
@@ -86,24 +82,21 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
 		watchdogMgr();
 		msg.data.push_back((double) _ID);
 		usleep(DELAY);
-        double newPosition = _direction*_coefficient * read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error) - _offset;
-        double dP = newPosition-oldPosition;
-        //if ( dP < MAX_DELTA_POSITION && dP > -MAX_DELTA_POSITION ) {
-            msg.data.push_back(newPosition);
-            if (dxl_error) {
-                ROS_WARN("Couldn't read position of dynamixel: ID=%d", _ID);
-                return false;
-            }
-            usleep(DELAY);
-            msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-            msg.layout.dim[0].size = (uint) msg.data.size();
-            msg.layout.dim[0].stride = 1;
-            msg.layout.dim[0].label = "";
+        double rawPosition = read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error);
+		double newPosition = (rawPosition*6.283185307/_resolution-_offset)/_direction*_ratio;
+		msg.data.push_back(newPosition);
+		if (dxl_error) {
+			ROS_WARN("Couldn't read position of dynamixel: ID=%d", _ID);
+			return false;
+		}
+		usleep(DELAY);
+		msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
+		msg.layout.dim[0].size = (uint) msg.data.size();
+		msg.layout.dim[0].stride = 1;
+		msg.layout.dim[0].label = "";
 
-            //publish values
-            pub.publish(msg);
-        //}
-        oldPosition = newPosition;
+		//publish values
+		pub.publish(msg);
 	}
 	return true;
 }
@@ -112,17 +105,18 @@ int WMDynamixel::getID(){
 	return _ID;
 }
 
-void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction, int mode) {
+void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed) {
 	_ID = Id;
 	_isEnable = false;
 	_offset = offset;
-	_coefficient = (2 * PI) / resolution;
     _resolution = resolution;
     _direction = direction;
 	//ROS_INFO("Dynamixel added with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
 	initDynamixel();
 	_isEnable = true;
 	_mode = mode;
+	_ratio = ratio;
+	_maxSpeed = maxSpeed;
 	//ROS_INFO("Initialised a dynamixel with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
 }
 

@@ -26,6 +26,8 @@ namespace wm_dynamixel_hardware_interface {
         direction = 1;
         simulation = false;
         mode = 0;
+        double ratio = 1;
+        int maxSpeed = 1023;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -36,6 +38,8 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("mode", mode);
         robot_hw_nh.getParam("simulation", simulation);
         robot_hw_nh.getParam("direction", direction);
+        robot_hw_nh.getParam("ratio", ratio);
+        robot_hw_nh.getParam("max_speed", maxSpeed);
         Name = Joints[0];
         oldCmd = 0;
 
@@ -77,7 +81,9 @@ namespace wm_dynamixel_hardware_interface {
                     Offset,
                     resolution,
                     direction,
-                    mode
+                    mode,
+                    ratio,
+                    maxSpeed
             };
             msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
             msg.layout.dim[0].size = (uint) vec.size();

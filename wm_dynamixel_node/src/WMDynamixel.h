@@ -24,14 +24,14 @@ public:
      * @param offset
      * @param resolution
      */
-	WMDynamixel(int Id, double offset, int resolution, int direction, int mode);
+	WMDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
     /**
      *  Update dynamixel parameters
      * @param Id
      * @param offset
      * @param resolution
      */
-	void updateDynamixel(int Id, double offset, int resolution, int direction, int mode);
+	void updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
 
 	/**
 	 * Send a new velocity to the dynamixel (in Rad/s)
@@ -75,9 +75,6 @@ private:
 
     // direction of rotation
     int _direction;
-	
-	//number of positions for 2Pi Rad in dynamixel
-    double _coefficient;
 
 	//number of positions for 2Pi Rad in dynamixel
 	int _resolution;
@@ -91,11 +88,11 @@ private:
     //test if watchdog is
     bool watchdogMgr();
 
-	// buffer to limit acceleration
-	double oldVelocity;
+    // special gear ratio
+    double _ratio;
 
-    // buffer to filter position
-    double oldPosition;
+    // Max rotational speed from 0 to 1023 (dynamixel speed units)
+    double _maxSpeed;
 
 };
 
