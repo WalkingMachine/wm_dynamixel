@@ -27,7 +27,6 @@ void WMDynamixel::initDynamixel() {
         //Set WHEEL mode
         write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0 );
         write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 1023);
-        write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 100);
     }
 
 	usleep(DELAY);
@@ -56,15 +55,16 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 
 bool WMDynamixel::setPosition(double newPosition) {
 	//read and calculate new velocity
-	int iPosition = (int) ((newPosition+_offset)*_direction*83.765759522);
+    int iPosition = (int) ((newPosition)*_direction*162.815644308+511);
     if (iPosition < 0) {
-        iPosition = 0;
+		iPosition += 1023;
     }
 	if (iPosition > 1023 ) {
-		iPosition = 1023;
+		iPosition -= 1023;
 	}
 	//write velocity in dynamixel
-    ROS_INFO("Setting position to %d", iPosition);
+	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 80);
+	usleep(DELAY);
 	if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
         ROS_WARN("Couldn't send position command to dynamixel: ID=%d", _ID);
 		return false;
