@@ -14,7 +14,7 @@
 #include "dynamixel_sdk.h"
 
 #define NBR_OF_TRY 10
-#define PORTNAME "/dev/ttyUSB0"
+#define PORTNAME "/dev/dynamixel"
 #define BAUDRATE 57600
 
 

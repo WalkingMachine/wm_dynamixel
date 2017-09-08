@@ -31,7 +31,7 @@ void WMDynamixel::initDynamixel() {
 
 bool WMDynamixel::setVelocity(double newVelocity) {
 	//read and calculate new velocity
-	int iVelocity = (int) (newVelocity * 325.631013566);
+	int iVelocity = (int) (newVelocity * 325.631013566 * _direction);
 	if (iVelocity < 0) {
 		iVelocity = 1023 - iVelocity;
 	}

@@ -94,7 +94,7 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
 	int direction = (int)msg->data[3];
 	int mode = (int)msg->data[4];
     double ratio = msg->data[5];
-    int maxSpeed = msg->data[6];
+    int maxSpeed = (int)msg->data[6];
 
 	ROS_INFO("Try to add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 

@@ -120,6 +120,7 @@ namespace wm_dynamixel_hardware_interface {
             msg.layout.dim[0].stride = 1;
             msg.layout.dim[0].label = "";
             CtrlPub.publish(msg);
+            usleep(20000);
             oldCmd = cmd;
         }
 	}
