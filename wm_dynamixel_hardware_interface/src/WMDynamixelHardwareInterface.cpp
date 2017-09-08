@@ -9,6 +9,7 @@ namespace wm_dynamixel_hardware_interface {
 
 
     hardware_interface::VelocityJointInterface WMDynamixelHardwareInterface::joint_velocity_interface_;
+    hardware_interface::PositionJointInterface WMDynamixelHardwareInterface::joint_position_interface_;
     hardware_interface::JointStateInterface    WMDynamixelHardwareInterface::joint_state_interface_;
 
 // << ---- H I G H   L E V E L   I N T E R F A C E ---- >>
@@ -24,6 +25,9 @@ namespace wm_dynamixel_hardware_interface {
         resolution = 4096;
         direction = 1;
         simulation = false;
+        mode = 0;
+        double ratio = 1;
+        int maxSpeed = 1023;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
@@ -31,8 +35,11 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("offset", Offset);
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
+        robot_hw_nh.getParam("mode", mode);
         robot_hw_nh.getParam("simulation", simulation);
         robot_hw_nh.getParam("direction", direction);
+        robot_hw_nh.getParam("ratio", ratio);
+        robot_hw_nh.getParam("max_speed", maxSpeed);
         Name = Joints[0];
         oldCmd = 0;
 
@@ -42,11 +49,19 @@ namespace wm_dynamixel_hardware_interface {
 		vel = 0;    //velocity
 		eff = 0;    //effort
 
-		// Register interfaces
-		joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
-		joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
-		registerInterface(&joint_state_interface_);
-		registerInterface(&joint_velocity_interface_);
+        // Register interfaces
+        joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
+        registerInterface(&joint_state_interface_);
+        if ( mode == 0 ){
+            ROS_INFO("registering dynamixel joint_velocity_interface: ID=%d", Id);
+            joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
+            registerInterface(&joint_velocity_interface_);
+        }
+        if ( mode == 1 ){
+            ROS_INFO("registering dynamixel joint_position_interface: ID=%d", Id);
+            joint_position_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
+            registerInterface(&joint_position_interface_);
+        }
 
         if (!simulation) {
             // advertise publisher
@@ -65,7 +80,10 @@ namespace wm_dynamixel_hardware_interface {
                     double(Id),
                     Offset,
                     resolution,
-                    direction
+                    direction,
+                    mode,
+                    ratio,
+                    maxSpeed
             };
             msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
             msg.layout.dim[0].size = (uint) vec.size();
@@ -81,8 +99,12 @@ namespace wm_dynamixel_hardware_interface {
 	}
 	
 	void WMDynamixelHardwareInterface::read(const ros::Time &time, const ros::Duration &period) {
-        if (simulation)
-            pos += cmd/30;
+        if (simulation) {
+            if ( mode == 0 )
+                pos += cmd / 30;
+            if ( mode == 1 )
+                pos = cmd;
+        }
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
@@ -98,6 +120,7 @@ namespace wm_dynamixel_hardware_interface {
             msg.layout.dim[0].stride = 1;
             msg.layout.dim[0].label = "";
             CtrlPub.publish(msg);
+            usleep(20000);
             oldCmd = cmd;
         }
 	}
