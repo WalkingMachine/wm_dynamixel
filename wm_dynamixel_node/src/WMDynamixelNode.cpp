@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 	}
 
 	//initialise ros subscriber for commands
-	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, WriteVelocity);
+	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, UpdateVelocity);
 
 	//initialise ros subscriber for initialisations
 	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, addDynamixel);
@@ -58,12 +58,13 @@ int main(int argc, char **argv){
 }
 
 void nodeLoop() {
-	ros::Rate loop_rate(50);
+	ros::Rate loop_rate(10);
 	int iCount = 0;
 	ROS_INFO("Going in node loop.");
 	while(ros::ok()){
 		//ROS_INFO("Looping");
 		ros::spinOnce();
+		WriteVelocity();
 		for (int index = 0; index < dynamixelArray.size(); index++) {
 			dynamixelArray[index].publishPosition(dynamixelPublisher);
 		}
@@ -72,17 +73,23 @@ void nodeLoop() {
 	}
 }
 
-void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
+void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
 	int ID = (int)msg->data[0];
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
-			if ( dynamixelArray[index]._mode == 0 ){
-				dynamixelArray[index].setVelocity(msg->data[1]);
-				break;
-			} else if ( dynamixelArray[index]._mode == 1 ) {
-				dynamixelArray[index].setPosition(msg->data[1]);
-				break;
-			}
+			dynamixelArray[index]._cmd = msg->data[1];
+		}
+	}
+}
+
+void WriteVelocity() {
+	for (int index=0; index < dynamixelArray.size(); index++) {
+		if ( dynamixelArray[index]._mode == 0 ){
+			dynamixelArray[index].setVelocity(dynamixelArray[index]._cmd);
+			break;
+		} else if ( dynamixelArray[index]._mode == 1 ) {
+			dynamixelArray[index].setPosition(dynamixelArray[index]._cmd);
+			break;
 		}
 	}
 }

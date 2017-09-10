@@ -62,7 +62,10 @@ public:
 
 	// int control mode ( 0=velocity, 1=position )
 	int _mode;
-	
+
+	// command
+	double _cmd;
+
 private:
 	//id of material dynamixel
 	int _ID;
