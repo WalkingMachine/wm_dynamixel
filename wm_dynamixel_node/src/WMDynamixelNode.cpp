@@ -78,6 +78,7 @@ void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
 			dynamixelArray[index]._cmd = msg->data[1];
+			break;
 		}
 	}
 }
@@ -86,10 +87,8 @@ void WriteVelocity() {
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if ( dynamixelArray[index]._mode == 0 ){
 			dynamixelArray[index].setVelocity(dynamixelArray[index]._cmd);
-			break;
 		} else if ( dynamixelArray[index]._mode == 1 ) {
 			dynamixelArray[index].setPosition(dynamixelArray[index]._cmd);
-			break;
 		}
 	}
 }
