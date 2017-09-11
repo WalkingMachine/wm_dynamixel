@@ -109,7 +109,7 @@ namespace wm_dynamixel_hardware_interface {
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
         // Eliminate impossible commands
-        if (!( cmd < 30 && cmd > -30) || (cmd > 0.000001 && cmd < -0.000001)){ cmd = 0; }
+        if ( cmd > 5 || cmd < -5){ cmd = 0; }
 
         if (!simulation) {
             std_msgs::Float64MultiArray msg;
@@ -120,7 +120,6 @@ namespace wm_dynamixel_hardware_interface {
             msg.layout.dim[0].stride = 1;
             msg.layout.dim[0].label = "";
             CtrlPub.publish(msg);
-            usleep(20000);
             oldCmd = cmd;
         }
 	}
