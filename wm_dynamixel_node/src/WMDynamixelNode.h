@@ -35,7 +35,8 @@ bool InitPort(const char *PortName, int BaudRate);
  * callback for new command messages
  * @param msg
  */
-void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg);
+void WriteVelocity();
+void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg);
 
 /**
  * callback for initialise a dynamixel

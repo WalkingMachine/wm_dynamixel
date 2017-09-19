@@ -9,7 +9,7 @@
 #include <ctime>
 
 #define PI 3.1415926535897932
-#define DELAY 50000		//us
+#define DELAY 20000		//us
 #define WATCHDOG 100000	//us
 #define MAX_ACCELERATION 0.2  //rad/cycle
 #define MAX_DELTA_POSITION 0.2  //rad/cycle
@@ -62,7 +62,10 @@ public:
 
 	// int control mode ( 0=velocity, 1=position )
 	int _mode;
-	
+
+	// command
+	double _cmd;
+
 private:
 	//id of material dynamixel
 	int _ID;
