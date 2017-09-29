@@ -9,7 +9,7 @@
 #include <ctime>
 
 #define PI 3.1415926535897932
-#define DELAY 6000		//us
+#define DELAY 10000		//us
 #define WATCHDOG 100000	//us
 #define MAX_ACCELERATION 0.2  //rad/cycle
 #define MAX_DELTA_POSITION 0.2  //rad/cycle
