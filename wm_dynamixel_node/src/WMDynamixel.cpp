@@ -51,6 +51,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 }
 
 bool WMDynamixel::setPosition(double newPosition) {
+    newPosition = AngleProxy(0, newPosition);
     //read and calculate new velocity
     int iPosition = (int) ((newPosition / _ratio * _direction + _offset) * 1023 / 6.283185307);
     if (iPosition < 0) {
@@ -85,6 +86,7 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
         usleep(DELAY);
         double rawPosition = read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error);
         double newPosition = (rawPosition * 6.283185307 / _resolution - _offset) / _direction * _ratio;
+        newPosition = AngleProxy(0, newPosition);
         msg.data.push_back(newPosition);
         if (dxl_error) {
             ROS_WARN("Couldn't read position of dynamixel: ID=%d", _ID);
