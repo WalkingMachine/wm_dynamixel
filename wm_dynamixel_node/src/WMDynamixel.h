@@ -97,6 +97,17 @@ private:
     // Max rotational speed from 0 to 1023 (dynamixel speed units)
     double _maxSpeed;
 
+	double Mod( double A, double N ) {
+		return A-floor(A/N)*N;
+	}
+	double AngleProxy( double A1 = 0, double A2 = 0 ) {  // Give the smallest difference between two angles in rad
+		A1 = A2-A1;
+		A1 = Mod( A1+M_PI, 2*M_PI )-M_PI;
+		return A1;
+	}
+
 };
+
+
 
 #endif //PROJECT_WMDYNAMIXEL_H
