@@ -7,6 +7,7 @@
 
 #include "WMDynamixelNode.h"
 #include <ctime>
+#include <math.h>
 
 #define PI 3.1415926535897932
 #define DELAY 10000		//us
