@@ -14,7 +14,7 @@
 #include "dynamixel_sdk.h"
 
 #define NBR_OF_TRY 10
-#define PORTNAME "/dev/ttyUSB0"
+#define PORTNAME "/dev/dynamixel"
 #define BAUDRATE 57600
 
 
@@ -35,7 +35,8 @@ bool InitPort(const char *PortName, int BaudRate);
  * callback for new command messages
  * @param msg
  */
-void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg);
+void WriteVelocity();
+void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg);
 
 /**
  * callback for initialise a dynamixel

@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 	}
 
 	//initialise ros subscriber for commands
-	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, WriteVelocity);
+	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, UpdateVelocity);
 
 	//initialise ros subscriber for initialisations
 	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, addDynamixel);
@@ -58,12 +58,13 @@ int main(int argc, char **argv){
 }
 
 void nodeLoop() {
-	ros::Rate loop_rate(50);
+	ros::Rate loop_rate(10);
 	int iCount = 0;
 	ROS_INFO("Going in node loop.");
 	while(ros::ok()){
 		//ROS_INFO("Looping");
 		ros::spinOnce();
+		WriteVelocity();
 		for (int index = 0; index < dynamixelArray.size(); index++) {
 			dynamixelArray[index].publishPosition(dynamixelPublisher);
 		}
@@ -72,13 +73,22 @@ void nodeLoop() {
 	}
 }
 
-void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
+void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
 	int ID = (int)msg->data[0];
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
-			//ROS_INFO("received command for dynamixel %i",ID);
-			dynamixelArray[index].setVelocity(msg->data[1]);
+			dynamixelArray[index]._cmd = msg->data[1];
 			break;
+		}
+	}
+}
+
+void WriteVelocity() {
+	for (int index=0; index < dynamixelArray.size(); index++) {
+		if ( dynamixelArray[index]._mode == 0 ){
+			dynamixelArray[index].setVelocity(dynamixelArray[index]._cmd);
+		} else if ( dynamixelArray[index]._mode == 1 ) {
+			dynamixelArray[index].setPosition(dynamixelArray[index]._cmd);
 		}
 	}
 }
@@ -89,18 +99,27 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
 	int resolution = (int)msg->data[2];
 	int direction = (int)msg->data[3];
 
+	int mode = (int)msg->data[4];
+    double ratio = msg->data[5];
+    int maxSpeed = (int)msg->data[6];
+
+
 	ROS_INFO("Try to add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
 			//ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction);
+
+			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction, mode, ratio, maxSpeed);
+
 			break;
 		}
 	}
 
 	//ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction));
+
+	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction, mode, ratio, maxSpeed));
+
 }
 
 bool InitPort(const char *PortName, int BaudRate) {

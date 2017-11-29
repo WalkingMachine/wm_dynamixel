@@ -34,6 +34,7 @@ namespace wm_dynamixel_hardware_interface
     private:
         // Variables
         static hardware_interface::VelocityJointInterface joint_velocity_interface_;
+        static hardware_interface::PositionJointInterface joint_position_interface_;
         static hardware_interface::JointStateInterface joint_state_interface_;
         //std::string port;
         ros::NodeHandle nh;
@@ -47,6 +48,9 @@ namespace wm_dynamixel_hardware_interface
         double resolution;
         double oldCmd;
         int direction;
+
+        bool simulation;
+        int mode;
 
     };
 }
