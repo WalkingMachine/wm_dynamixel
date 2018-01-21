@@ -27,7 +27,7 @@ void WMDynamixel::initDynamixel() {
         //Set POSITION mode
         ROS_INFO("//set Position Mode");
         write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
-        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 1023);
+        write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, _resolution);
     }
 
     usleep(DELAY);
@@ -56,7 +56,7 @@ bool WMDynamixel::setVelocity(double newVelocity) {
 bool WMDynamixel::setPosition(double newPosition) {
     newPosition = AngleProxy(0, newPosition);
     //read and calculate new velocity
-    int iPosition = (int) ((newPosition / _ratio * _direction + _offset) * 1023 / 6.283185307);
+    int iPosition = (int) ((newPosition / _ratio * _direction + _offset) * _resolution / 6.283185307);
     if (iPosition < 0) {
         iPosition += _resolution;
     }
