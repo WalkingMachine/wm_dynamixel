@@ -180,26 +180,6 @@ bool write2BDynamixel(int ID, int iAddress, int iValue){
 	return true;
 }
 
-int read1BDynamixel(int ID, int iAddress) {
-	int dxl_comm_result;
-	uint8_t dxl_error = 0;
-
-	uint16_t dxl_present_position;
-	// Read present position
-	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &dxl_present_position, &dxl_error);
-	if (dxl_comm_result != COMM_SUCCESS)
-	{
-		packetHandler->printTxRxResult(dxl_comm_result);
-		return false;
-	}
-	else if (dxl_error != 0)
-	{
-		packetHandler->printRxPacketError(dxl_error);
-		return false;
-	}
-	return dxl_present_position;
-}
-
 int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 	int dxl_comm_result;
 	uint16_t returnValue;

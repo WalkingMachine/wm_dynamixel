@@ -64,14 +64,6 @@ bool write1BDynamixel(int ID, int iAddress, int iValue);
 bool write2BDynamixel(int ID, int iAddress, int iValue);
 
 /**
- * Function reading 1 byte in definite address of dynamixel selected
- * @param ID
- * @param iAddress
- * @return
- */
-int read1BDynamixel(int ID, int iAddress);
-
-/**
  * Function reading 2 bytes in definite address of dynamixel selected
  * @param ID
  * @param iAddress
