@@ -42,6 +42,9 @@ int main(int argc, char **argv){
 		}
 	}
 
+	//initialise ros service for data reading
+	ros::ServiceServer service = dynamixelHandler.advertiseService("Read_Data_Dynamixel", Read_Data_Dynamixel);
+
 	//initialise ros subscriber for commands
 	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, UpdateVelocity);
 
@@ -215,3 +218,11 @@ int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 	}
 	return returnValue;
 }
+
+bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
+                         wm_dynamixel_node::ReadDataDynamixel::Response &res) {
+	bool returnResult;
+	res.value = read2BDynamixel(req.id, req.address, &returnResult);
+	return returnResult;
+}
+

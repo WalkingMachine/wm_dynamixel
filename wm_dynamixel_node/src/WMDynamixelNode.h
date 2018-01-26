@@ -79,4 +79,12 @@ int read1BDynamixel(int ID, int iAddress);
  */
 int read2BDynamixel(int ID, int iAddress, bool *returnError);
 
+/**
+ * Service method
+ * @param req
+ * @param res
+ * @return
+ */
+bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
+                         wm_dynamixel_node::ReadDataDynamixel::Response &res);
 #endif //PROJECT_WMDynamixelNode_H
