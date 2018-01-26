@@ -10,6 +10,7 @@
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float64MultiArray.h"
+#include "wm_dynamixel_node/ReadDataDynamixel.h"
 
 #include "dynamixel_sdk.h"
 
