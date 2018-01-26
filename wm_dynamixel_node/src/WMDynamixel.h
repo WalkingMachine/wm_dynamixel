@@ -27,16 +27,14 @@ public:
      * @param offset
      * @param resolution
      */
-
 	WMDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
 
-    /**
-     *  Update dynamixel parameters
-     * @param Id
-     * @param offset
-     * @param resolution
-     */
-
+	/**
+	 * Update dynamixel parameters
+	 * @param Id
+	 * @param offset
+	 * @param resolution
+	 */
 	void updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
 
 
@@ -62,7 +60,6 @@ public:
 	bool publishPosition(ros::Publisher pub);
 
     /**
-     *
      * @return getter for ID
      */
 	int getID();
