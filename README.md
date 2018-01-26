@@ -4,6 +4,14 @@ Interface entre les servomoteurs Dynamixel et `Ros`, et entre `Ros` et `Roscontr
 
 Dans un premier temps cette interface matérielle sera adaptée uniquement aux dynamixels du poignet de `Sara 2.0`.
 
+## Dependencies
+
+- Installer `ROS Control` :
+
+```shell
+sudo apt install ros-kinetic-ros-control -y
+```
+
 ## Installation
 
 - Installer `git` :
@@ -16,7 +24,7 @@ sudo apt install git
 
 ```shell
 cd ~/ros_ws/src
-git clone https://github.com/WalkingMachine/wm_dynamixel_hardware_interface.git
+git clone https://github.com/WalkingMachine/wm_dynamixel.git
 ```
 - Compiler le workspace :
 
