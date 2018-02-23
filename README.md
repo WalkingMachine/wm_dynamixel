@@ -58,7 +58,7 @@ roslaunch wm_dynamixel_node wm_dynamixel_node.launch
 
 - Initialiser les dynamixels à utiliser en publiant sur le topic `dynamixel_init`.
 
-- Envoyer des commandes de vélocité sur le topic `dynamixel_cmd`.
+- Envoyer des commandes de vélocité (ou position selon le mode de commande) sur le topic `dynamixel_cmd`.
 
 - Lire la position des dynamixels sur le topic `dynamixel_pos`.
 
@@ -70,19 +70,22 @@ HARDWARE_NAME:
   joints:
     - HARDWARE_NAME
   id: DYNAMIXEL_ID
-  offset: OFFSET
-  direction: DIRECTION
+  offset: OFFSET [rad]
+  direction: DIRECTION [+1/-1]
+  simulation: [true/false] #Fait abstraction du dynamixel (pour des tests)
+  resolution: DYNAMIXEL_RESOLUTION #Voir Data sheet du dynamixel
+  max_speed: VELOCITY_MAX_IN_POS_MODE #Environ vitesse moyenne en mode position puisqu'il atteint rapidement sa max_speed
+  mode: COMMAND_MODE # velocitymode = 0 / position mode = 1
 ```
-
 ## Topics 
 
 Tout les topics utilisent le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
 
 |    Nom du Topic    |         `dynamixel_init`         |                     `dynamixel_cmd`                     |                         `dynamixel_pos`                         |
 |:------------------:|:--------------------------------:|:-------------------------------------------------------:|:---------------------------------------------------------------:|
-| Index de la donnée | Sers à initialiser un dynamixel. | Sers à commander la vélocité d'un dynamixel initialisé. | Sers à lire le feedback en position des dynamixels initialisés. |
+| Index de la donnée | Sers à initialiser un dynamixel. | Sers à commander la vélocité (ou position) d'un dynamixel initialisé. | Sers à lire le feedback en position des dynamixels initialisés. |
 |          0         |          ID du dynamixel         |                     ID du dynamixel                     |                         ID du dynamixel                         |
-|          1         |        Offset du dynamixel       |                Nouvelle vitesse *[rad/s]*               |                       Angle actuel *[rad]*                      |
+|          1         |        Offset du dynamixel       |                Nouvelle vitesse *[rad/s]* OU Nouvelle position *[rad]*         |                       Angle actuel *[rad]*                      |
 |          2         |      Resolution du dynamixel     |                           */*                           |                               */*                               |
 |          3         |       Direction du dynamixel     |                           */*                           |                               */*                               |
 
