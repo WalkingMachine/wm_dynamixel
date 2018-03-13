@@ -186,7 +186,8 @@ int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 	uint8_t dxl_error = 0;
 	*returnError = false;
 	// Read present position
-	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &returnValue, &dxl_error);
+	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, (uint8_t) ID, (uint16_t) iAddress, &returnValue,
+	                                               &dxl_error);
 	if (dxl_comm_result != COMM_SUCCESS) {
 		packetHandler->printTxRxResult(dxl_comm_result);
 		*returnError = true;
@@ -201,8 +202,24 @@ int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 
 bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
                          wm_dynamixel_node::ReadDataDynamixel::Response &res) {
-	bool returnResult;
-	res.value = read2BDynamixel(req.id, req.address, &returnResult);
-	return returnResult;
+	int dxl_comm_result;
+	uint16_t returnValue;
+	uint8_t returnError = 0;
+
+	auto ID = (uint8_t) req.id;
+	auto iAddress = (uint16_t) req.address;
+
+	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &returnValue, &returnError);
+	ROS_INFO("result: %i ; value: %i ; error: %i", dxl_comm_result, returnValue, returnError);
+
+	if (dxl_comm_result != COMM_SUCCESS) {
+		packetHandler->printTxRxResult(dxl_comm_result);
+		return false;
+	} else {
+		res.value = returnValue;
+		res.error = returnError;
+	}
+
+	return true;
 }
 
