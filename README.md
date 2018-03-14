@@ -81,13 +81,16 @@ HARDWARE_NAME:
 
 Tout les topics utilisent le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
 
-|    Nom du Topic    |         `dynamixel_init`         |                     `dynamixel_cmd`                     |                         `dynamixel_pos`                         |
-|:------------------:|:--------------------------------:|:-------------------------------------------------------:|:---------------------------------------------------------------:|
-| Index de la donnée | Sers à initialiser un dynamixel. | Sers à commander la vélocité (ou position) d'un dynamixel initialisé. | Sers à lire le feedback en position des dynamixels initialisés. |
-|          0         |          ID du dynamixel         |                     ID du dynamixel                     |                         ID du dynamixel                         |
-|          1         |        Offset du dynamixel       |                Nouvelle vitesse *[rad/s]* OU Nouvelle position *[rad]*         |                       Angle actuel *[rad]*                      |
-|          2         |      Resolution du dynamixel     |                           */*                           |                               */*                               |
-|          3         |       Direction du dynamixel     |                           */*                           |                               */*                               |
+|    Nom du topic    |         `dynamixel_init`         |                             `dynamixel_cmd`                            |                         `dynamixel_pos`                         |
+|:------------------:|:--------------------------------:|:----------------------------------------------------------------------:|:---------------------------------------------------------------:|
+| Index de la donnée | Sers à initialiser un dynamixel. | Sers à commander la vélocité ou la position d'un dynamixel initialisé. | Sers à lire le feedback en position des dynamixels initialisés. |
+|          0         |          ID du dynamixel         |                             ID du dynamixel                            |                         ID du dynamixel                         |
+|          1         |        Offset du dynamixel       |         Nouvelle vitesse *[rad/s]* OU Nouvelle position *[rad]*        |                       Angle actuel *[rad]*                      |
+|          2         |      Resolution du dynamixel     |                                   */*                                  |                               */*                               |
+|          3         |      Direction du dynamixel      |                                   */*                                  |                               */*                               |
+|          4         |       Mode (0:vel ; 1:pos)       |                                   */*                                  |                               */*                               |
+|          5         |               Ratio              |                                   */*                                  |                               */*                               |
+|          6         |          Vitesse maximum         |                                   */*                                  |                               */*                               |
 
 ## Credits
 
