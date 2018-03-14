@@ -23,6 +23,7 @@ find_package(cmake_modules REQUIRED)
 add_service_files(
         FILES
         ReadDataDynamixel.srv
+		WriteDataDynamixel.srv
 )
 
 generate_messages(

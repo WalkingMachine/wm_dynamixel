@@ -42,8 +42,9 @@ int main(int argc, char **argv){
 		}
 	}
 
-	//initialise ros service for data reading
-	ros::ServiceServer service = dynamixelHandler.advertiseService("Read_Data_Dynamixel", Read_Data_Dynamixel);
+	//initialise ros service for data reading and writing
+	ros::ServiceServer service_read = dynamixelHandler.advertiseService("dynamixel/read_addr", Read_Data_Dynamixel);
+	ros::ServiceServer service_write = dynamixelHandler.advertiseService("dynamixel/write_addr", Write_Data_Dynamixel);
 
 	//initialise ros subscriber for commands
 	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, UpdateVelocity);
@@ -77,50 +78,43 @@ void nodeLoop() {
 }
 
 void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
-	int ID = (int)msg->data[0];
-	for (int index=0; index < dynamixelArray.size(); index++) {
-		if(dynamixelArray[index].getID() == ID){
-			dynamixelArray[index]._cmd = msg->data[1];
+	auto ID = (int) msg->data[0];
+	for (auto &index : dynamixelArray) {
+		if (index.getID() == ID) {
+			index._cmd = msg->data[1];
 			break;
 		}
 	}
 }
 
 void WriteVelocity() {
-	for (int index=0; index < dynamixelArray.size(); index++) {
-		if ( dynamixelArray[index]._mode == 0 ){
-			dynamixelArray[index].setVelocity(dynamixelArray[index]._cmd);
-		} else if ( dynamixelArray[index]._mode == 1 ) {
-			dynamixelArray[index].setPosition(dynamixelArray[index]._cmd);
+	for (auto &index : dynamixelArray) {
+		if (index._mode == 0) {
+			index.setVelocity(index._cmd);
+		} else if (index._mode == 1) {
+			index.setPosition(index._cmd);
 		}
 	}
 }
 
 void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
-	int ID = (int)msg->data[0];
+	auto ID = (int) msg->data[0];
 	double offset = msg->data[1];
-	int resolution = (int)msg->data[2];
-	int direction = (int)msg->data[3];
+	auto resolution = (int) msg->data[2];
+	auto direction = (int) msg->data[3];
 
-	int mode = (int)msg->data[4];
+	auto mode = (int) msg->data[4];
     double ratio = msg->data[5];
-    int maxSpeed = (int)msg->data[6];
-
+	auto maxSpeed = (int) msg->data[6];
 
 	ROS_INFO("Try to add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 
-	for (int index=0; index < dynamixelArray.size(); index++) {
-		if(dynamixelArray[index].getID() == ID){
-			//ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-
-			dynamixelArray[index].updateDynamixel(ID, offset, resolution, direction, mode, ratio, maxSpeed);
-
+	for (auto &index : dynamixelArray) {
+		if (index.getID() == ID) {
+			index.updateDynamixel(ID, offset, resolution, direction, mode, ratio, maxSpeed);
 			break;
 		}
 	}
-
-	//ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
-
 	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution, direction, mode, ratio, maxSpeed));
 
 }
@@ -148,7 +142,8 @@ bool write1BDynamixel(int ID, int iAddress, int iValue){
 	int dxl_comm_result;
 	uint8_t dxl_error = 0;
 
-	dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, ID, iAddress, iValue, &dxl_error);
+	dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, (uint8_t) ID, (uint16_t) iAddress, (uint8_t) iValue,
+	                                                &dxl_error);
 	if (dxl_comm_result != COMM_SUCCESS)
 	{
 		packetHandler->printTxRxResult(dxl_comm_result);
@@ -166,7 +161,8 @@ bool write1BDynamixel(int ID, int iAddress, int iValue){
 bool write2BDynamixel(int ID, int iAddress, int iValue){
 	int dxl_comm_result;
 	uint8_t dxl_error = 0;
-	dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, ID, iAddress, iValue, &dxl_error);
+	dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, (uint8_t) ID, (uint16_t) iAddress, (uint16_t) iValue,
+	                                                &dxl_error);
 	if (dxl_comm_result != COMM_SUCCESS)
 	{
 		packetHandler->printTxRxResult(dxl_comm_result);
@@ -200,26 +196,125 @@ int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 	return returnValue;
 }
 
+uint16_t itIsA2BValue(uint16_t address, bool *is2BValue) {
+	uint16_t iAddress;
+
+	switch (address) {
+		case 6:
+		case 7:
+			*is2BValue = true;
+			iAddress = 6;
+			break;
+
+		case 8:
+		case 9:
+			*is2BValue = true;
+			iAddress = 8;
+			break;
+
+		case 14:
+		case 15:
+			*is2BValue = true;
+			iAddress = 14;
+			break;
+
+		case 20:
+		case 21:
+			*is2BValue = true;
+			iAddress = 20;
+			break;
+
+		case 30:
+		case 31:
+			*is2BValue = true;
+			iAddress = 30;
+			break;
+
+		case 32:
+		case 33:
+			*is2BValue = true;
+			iAddress = 32;
+			break;
+
+		case 34:
+		case 35:
+			*is2BValue = true;
+			iAddress = 34;
+			break;
+
+		case 48:
+		case 49:
+			*is2BValue = true;
+			iAddress = 48;
+			break;
+
+		case 68:
+		case 69:
+			*is2BValue = true;
+			iAddress = 68;
+			break;
+
+		case 71:
+		case 72:
+			*is2BValue = true;
+			iAddress = 71;
+			break;
+
+		default:
+			*is2BValue = false;
+			iAddress = address;
+			break;
+	}
+	return iAddress;
+}
+
 bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
                          wm_dynamixel_node::ReadDataDynamixel::Response &res) {
 	int dxl_comm_result;
-	uint16_t returnValue;
+	uint16_t returnValue16;
+	uint8_t returnValue8;
 	uint8_t returnError = 0;
 
+	bool bIts2Bytes;
+	auto iAddress = itIsA2BValue((uint16_t) req.address, &bIts2Bytes);
+
 	auto ID = (uint8_t) req.id;
-	auto iAddress = (uint16_t) req.address;
 
-	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &returnValue, &returnError);
-	ROS_INFO("result: %i ; value: %i ; error: %i", dxl_comm_result, returnValue, returnError);
-
-	if (dxl_comm_result != COMM_SUCCESS) {
-		packetHandler->printTxRxResult(dxl_comm_result);
-		return false;
+	if (bIts2Bytes) {
+		dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &returnValue16, &returnError);
+		ROS_INFO("result: %i ; value: %i ; error: %i", dxl_comm_result, returnValue16, returnError);
+		res.value = returnValue16;
 	} else {
-		res.value = returnValue;
-		res.error = returnError;
+		dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, ID, iAddress, &returnValue8, &returnError);
+		ROS_INFO("result: %i ; value: %i ; error: %i", dxl_comm_result, returnValue8, returnError);
+		res.value = returnValue8;
 	}
+	res.error = returnError;
 
-	return true;
+	return dxl_comm_result == COMM_SUCCESS;
 }
 
+bool Write_Data_Dynamixel(wm_dynamixel_node::WriteDataDynamixel::Request &req,
+                          wm_dynamixel_node::WriteDataDynamixel::Response &res) {
+
+	bool bIts2Bytes;
+	uint16_t iAddress = itIsA2BValue((uint16_t) req.address, &bIts2Bytes);
+
+	int dxl_comm_result;
+	uint8_t returnError = 0;
+
+	auto iID = (uint8_t) req.id;
+
+
+	if (bIts2Bytes) {
+		auto iValue = (uint16_t) req.value;
+		dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, iID, iAddress, iValue, &returnError);
+	} else {
+		auto iValue = (uint8_t) req.value;
+		dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, iID, iAddress, iValue, &returnError);
+	}
+
+	res.error = returnError;
+
+	return dxl_comm_result == COMM_SUCCESS;
+}

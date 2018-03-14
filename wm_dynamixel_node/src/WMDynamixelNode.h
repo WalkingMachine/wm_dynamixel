@@ -11,6 +11,7 @@
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float64MultiArray.h"
 #include "wm_dynamixel_node/ReadDataDynamixel.h"
+#include "wm_dynamixel_node/WriteDataDynamixel.h"
 
 #include "dynamixel_sdk.h"
 
@@ -71,6 +72,8 @@ bool write2BDynamixel(int ID, int iAddress, int iValue);
  */
 int read2BDynamixel(int ID, int iAddress, bool *returnError);
 
+uint16_t itIsA2BValue(uint16_t address, bool *is2BValue);
+
 /**
  * Service method
  * @param req
@@ -79,4 +82,14 @@ int read2BDynamixel(int ID, int iAddress, bool *returnError);
  */
 bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
                          wm_dynamixel_node::ReadDataDynamixel::Response &res);
+
+/**
+ * Service method
+ * @param req
+ * @param res
+ * @return
+ */
+bool Write_Data_Dynamixel(wm_dynamixel_node::WriteDataDynamixel::Request &req,
+                          wm_dynamixel_node::WriteDataDynamixel::Response &res);
+
 #endif //PROJECT_WMDynamixelNode_H
