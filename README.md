@@ -14,6 +14,12 @@ sudo apt install ros-kinetic-ros-control -y
 
 ## Installation
 
+- Authoriser votre utilisateur à utiliser la communication série :
+
+```shell
+sudo adduser your_user dialout
+```
+
 - Installer `git` :
 
 ```shell
