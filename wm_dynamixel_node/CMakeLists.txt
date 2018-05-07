@@ -13,16 +13,28 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         )
 
+## For add services
+find_package(message_generation REQUIRED CATKIN_DEPENDS message_runtime)
+
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(cmake_modules REQUIRED)
 
+add_service_files(
+        FILES
+        ReadDataDynamixel.srv
+		WriteDataDynamixel.srv
+)
+
+generate_messages(
+        DEPENDENCIES
+        std_msgs
+)
 
 catkin_package(
         LIBRARIES ${PROJECT_NAME}
         CATKIN_DEPENDS combined_robot_hw hardware_interface roscpp
 )
-
 
 ###########
 ## Build ##
@@ -31,8 +43,6 @@ catkin_package(
 include_directories(
     ${catkin_INCLUDE_DIRS}
 )
-
-
 
 add_executable(${PROJECT_NAME}
         src/WMDynamixelNode.cpp

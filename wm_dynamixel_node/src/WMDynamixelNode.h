@@ -10,6 +10,8 @@
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float64MultiArray.h"
+#include "wm_dynamixel_node/ReadDataDynamixel.h"
+#include "wm_dynamixel_node/WriteDataDynamixel.h"
 
 #include "dynamixel_sdk.h"
 
@@ -18,10 +20,15 @@
 #define BAUDRATE 57600
 
 
-/**
+namespace wm_dynamixel {
+
+	int main(int argc, char **argv);
+
+
+	/**
  * reading Loop for physical feedback
  */
-void nodeLoop();
+	void nodeLoop();
 
 /**
  * Initialise the connection with
@@ -29,20 +36,21 @@ void nodeLoop();
  * @param BaudRate
  * @return false if error
  */
-bool InitPort(const char *PortName, int BaudRate);
+	bool InitPort(const char *PortName, int BaudRate);
 
 /**
  * callback for new command messages
  * @param msg
  */
-void WriteVelocity();
-void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg);
+	void WriteVelocity();
+
+	void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg);
 
 /**
  * callback for initialise a dynamixel
  * @param msg
  */
-void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg);
+	void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg);
 
 /**
  * Function writing 1 byte in definite address of dynamixel selected
@@ -51,7 +59,7 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg);
  * @param iValue
  * @return
  */
-bool write1BDynamixel(int ID, int iAddress, int iValue);
+	bool write1BDynamixel(int ID, int iAddress, int iValue);
 
 /**
  * Function writing 2 bytes in definite address of dynamixel selected
@@ -60,15 +68,7 @@ bool write1BDynamixel(int ID, int iAddress, int iValue);
  * @param iValue
  * @return
  */
-bool write2BDynamixel(int ID, int iAddress, int iValue);
-
-/**
- * Function reading 1 byte in definite address of dynamixel selected
- * @param ID
- * @param iAddress
- * @return
- */
-int read1BDynamixel(int ID, int iAddress);
+	bool write2BDynamixel(int ID, int iAddress, int iValue);
 
 /**
  * Function reading 2 bytes in definite address of dynamixel selected
@@ -76,6 +76,27 @@ int read1BDynamixel(int ID, int iAddress);
  * @param iAddress
  * @return
  */
-int read2BDynamixel(int ID, int iAddress, bool *returnError);
+	int read2BDynamixel(int ID, int iAddress, bool *returnError);
+
+	uint16_t itIsA2BValue(uint16_t address, bool *is2BValue);
+
+/**
+ * Service method
+ * @param req
+ * @param res
+ * @return
+ */
+	bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
+	                         wm_dynamixel_node::ReadDataDynamixel::Response &res);
+
+/**
+ * Service method
+ * @param req
+ * @param res
+ * @return
+ */
+	bool Write_Data_Dynamixel(wm_dynamixel_node::WriteDataDynamixel::Request &req,
+	                          wm_dynamixel_node::WriteDataDynamixel::Response &res);
+}
 
 #endif //PROJECT_WMDynamixelNode_H
