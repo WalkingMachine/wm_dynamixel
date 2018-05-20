@@ -32,7 +32,6 @@ namespace wm_dynamixel {
 		void
 		updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
 
-
 		/**
 		 * Send a new velocity to the dynamixel (in Rad/s)
 		 * @param newVelocity
@@ -90,9 +89,6 @@ namespace wm_dynamixel {
 		//initialise dynamixel speed to 0 and toggle torque
 		void initDynamixel();
 
-		//test if watchdog is
-		bool watchdogMgr();
-
 		// special gear ratio
 		double _ratio;
 
@@ -104,6 +100,10 @@ namespace wm_dynamixel {
 
 		// command
 		double _cmd;
+
+		double Mod(double A, double N);
+
+		double AngleProxy(double A1 = 0, double A2 = 0);
 	};
 
 }

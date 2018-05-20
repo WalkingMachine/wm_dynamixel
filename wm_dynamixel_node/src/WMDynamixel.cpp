@@ -141,27 +141,6 @@ namespace wm_dynamixel {
 
 	}
 
-	bool WMDynamixel::watchdogMgr() {
-		time_t timer;
-		time(&timer);
-		//read actual system time
-		unsigned long sysTime = (unsigned long) timer * 1000;  //time in ms
-
-		//compare with watchdog
-		if (sysTime - WATCHDOG > _watchdog) {
-			ROS_WARN("watchdog on dynamixel %i!", _ID);
-			//set dynamixel speed to 0;
-			for (int iTry = 0; iTry < 10; iTry++) {
-				if (setVelocity(0)) {
-					break;
-				}
-				usleep(1000);
-			}
-			return true;
-		}
-		return false;
-	}
-
 	double WMDynamixel::Mod(double A, double N) {
 		return A - floor(A / N) * N;
 	}
