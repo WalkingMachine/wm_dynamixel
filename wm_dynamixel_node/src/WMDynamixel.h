@@ -59,11 +59,13 @@ namespace wm_dynamixel {
 		 */
 		int getID();
 
-		// int control mode ( 0=velocity, 1=position )
-		int _mode;
+		int getMode();
 
-		// command
-		double _cmd;
+		double getCmd();
+
+		void setMode(int mode);
+
+		void setCmd(double cmd);
 
 	private:
 		//id of material dynamixel
@@ -107,7 +109,11 @@ namespace wm_dynamixel {
 			return A1;
 		}
 
+		// int control mode ( 0=velocity, 1=position )
+		int _mode;
 
+		// command
+		double _cmd;
 	};
 
 }

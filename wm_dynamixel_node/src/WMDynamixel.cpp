@@ -150,4 +150,20 @@ namespace wm_dynamixel {
 		}
 		return false;
 	}
+
+	int WMDynamixel::getMode(){
+		return this->_mode;
+	}
+
+	double WMDynamixel::getCmd(){
+		return this->_cmd;
+	}
+
+	void WMDynamixel::setMode(int mode){
+		this->_mode = mode;
+	}
+
+	void WMDynamixel::setCmd(double cmd){
+		this->_cmd = cmd;
+	}
 }
