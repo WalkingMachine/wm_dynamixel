@@ -75,8 +75,6 @@ namespace wm_dynamixel {
 		ROS_INFO("Going in node loop.");
 		while (ros::ok()) {
 			ros::spinOnce();
-			WriteVelocity();
-
 			for (auto &index : dynamixelArray) {
 				index.publishPosition(dynamixelPublisher);
 			}
@@ -90,18 +88,15 @@ namespace wm_dynamixel {
 		auto ID = (int) msg->data[0];
 		for (auto &index : dynamixelArray) {
 			if (index.getID() == ID) {
-				index._cmd = msg->data[1];
-				break;
-			}
-		}
-	}
+				index.setCmd(msg->data[1]);
 
-	void WriteVelocity() {
-		for (auto &index : dynamixelArray) {
-			if (index._mode == 0) {
-				index.setVelocity(index._cmd);
-			} else if (index._mode == 1) {
-				index.setPosition(index._cmd);
+				if (index.getMode() == 0) {
+					index.setVelocity(index.getCmd());
+				} else if (index.getMode() == 1) {
+					index.setPosition(index.getCmd());
+				}
+
+				break;
 			}
 		}
 	}

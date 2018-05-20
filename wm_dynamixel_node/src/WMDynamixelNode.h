@@ -38,12 +38,6 @@ namespace wm_dynamixel {
  */
 	bool InitPort(const char *PortName, int BaudRate);
 
-/**
- * callback for new command messages
- * @param msg
- */
-	void WriteVelocity();
-
 	void UpdateVelocity(std_msgs::Float64MultiArrayConstPtr msg);
 
 /**
