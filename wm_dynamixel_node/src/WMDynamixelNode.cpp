@@ -81,14 +81,11 @@ namespace wm_dynamixel {
 		auto ID = (int) msg->data[0];
 		for (auto &index : dynamixelArray) {
 			if (index.getID() == ID) {
-				index.setCmd(msg->data[1]);
-
 				if (index.getMode() == 0) {
-					index.setVelocity(index.getCmd());
+					index.setVelocity(msg->data[1]);
 				} else if (index.getMode() == 1) {
-					index.setPosition(index.getCmd());
+					index.setPosition(msg->data[1]);
 				}
-
 				break;
 			}
 		}
