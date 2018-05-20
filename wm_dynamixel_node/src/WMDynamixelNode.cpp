@@ -67,15 +67,12 @@ namespace wm_dynamixel {
 
 	void nodeLoop() {
 		ros::Rate loop_rate(10);
-		int iCount = 0;
 		ROS_INFO("Going in node loop.");
 		while (ros::ok()) {
 			ros::spinOnce();
 			for (auto &index : dynamixelArray) {
 				index.publishPosition(dynamixelPublisher);
 			}
-
-			iCount++;
 			loop_rate.sleep();
 		}
 	}
