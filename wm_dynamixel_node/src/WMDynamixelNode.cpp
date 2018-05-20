@@ -47,18 +47,14 @@ namespace wm_dynamixel {
 		}
 
 		//initialise ros service for data reading and writing
-		ros::ServiceServer service_read = dynamixelHandler.advertiseService("dynamixel/read_addr",
-		                                                                    wm_dynamixel::Read_Data_Dynamixel);
-		ros::ServiceServer service_write = dynamixelHandler.advertiseService("dynamixel/write_addr",
-		                                                                     wm_dynamixel::Write_Data_Dynamixel);
+		ros::ServiceServer service_read = dynamixelHandler.advertiseService("dynamixel/read_addr", wm_dynamixel::Read_Data_Dynamixel);
+		ros::ServiceServer service_write = dynamixelHandler.advertiseService("dynamixel/write_addr", wm_dynamixel::Write_Data_Dynamixel);
 
 		//initialise ros subscriber for commands
-		ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10,
-		                                                                 wm_dynamixel::UpdateVelocity);
+		ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, wm_dynamixel::UpdateVelocity);
 
 		//initialise ros subscriber for initialisations
-		ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10,
-		                                                                    wm_dynamixel::addDynamixel);
+		ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, wm_dynamixel::addDynamixel);
 
 		//initialise ros publisher for data feedback
 		wm_dynamixel::dynamixelPublisher = dynamixelHandler.advertise<std_msgs::Float64MultiArray>("dynamixel_pos", 10);

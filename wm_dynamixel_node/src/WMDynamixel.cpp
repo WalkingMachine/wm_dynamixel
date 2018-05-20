@@ -5,8 +5,8 @@
 #include "WMDynamixel.h"
 
 namespace wm_dynamixel {
-	WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio,
-	                         int maxSpeed) {
+
+	WMDynamixel::WMDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed) {
 		updateDynamixel(Id, offset, resolution, direction, mode, ratio, maxSpeed);
 	}
 
@@ -111,7 +111,6 @@ namespace wm_dynamixel {
 	int WMDynamixel::getID() {
 		return _ID;
 	}
-
 
 	void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio,
 	                                  int maxSpeed) {
