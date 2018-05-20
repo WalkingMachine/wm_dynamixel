@@ -24,34 +24,46 @@ namespace wm_dynamixel {
 			ROS_INFO("//set WHEEL Mode");
 			write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
 			write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);
+			this->_cmd = 0;
 		} else if (_mode == 1) {
 			//Set POSITION mode
 			ROS_INFO("//set Position Mode");
 			write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
 			write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, _resolution);
-		}
 
+			bool dxl_error = false;
+			double rawPosition = read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error);
+
+			if (!dxl_error) {
+				double newPosition = (rawPosition * 6.283185307 / _resolution - _offset) / _direction * _ratio;
+				this->_cmd = AngleProxy(0, newPosition);
+			}else{
+				ROS_WARN("Couldn't read position of dynamixel for init: ID=%d", _ID);
+				this->_cmd = 0;
+			}
+		}
 		usleep(DELAY);
 	}
 
 	bool WMDynamixel::setVelocity(double newVelocity) {
-		//read and calculate new velocity
+		// Calculate new velocity
 		auto iVelocity = (int) (newVelocity * 325.631013566 * _direction);
 		if (iVelocity < 0) {
 			iVelocity = 1023 - iVelocity;
 		}
 
-		//write velocity in dynamixel
-		if (!write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
+		if(iVelocity == this->_cmd) return true;
+
+		for (int iTry = 0; iTry < 10; iTry++) {
+			if (write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
+				this->_cmd = iVelocity;
+				return true;
+			}
 			ROS_WARN("Couldn't send velocity command to dynamixel: ID=%d", _ID);
-			return false;
+			usleep(1000);
 		}
 
-		//write watchdog
-		time_t timer;
-		time(&timer);
-		_watchdog = (unsigned long) timer * 1000;  //time in ms
-		return true;
+		return false;
 	}
 
 	bool WMDynamixel::setPosition(double newPosition) {
@@ -64,19 +76,26 @@ namespace wm_dynamixel {
 		if (iPosition > _resolution) {
 			iPosition -= _resolution;
 		}
-		//write velocity in dynamixel
-		write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, (int) _maxSpeed);
-		usleep(DELAY);
-		if (!write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
-			ROS_WARN("Couldn't send position command to dynamixel: ID=%d", _ID);
-			return false;
-		}
 
-		//write watchdog
-		time_t timer;
-		time(&timer);
-		_watchdog = (unsigned long) timer * 1000;  //time in ms
-		return true;
+		if(iPosition == this->_cmd) return true;
+
+		for (int iTry = 0; iTry < 10; iTry++) {
+			if(write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, (int) _maxSpeed)){
+				usleep(DELAY);
+				if (write2BDynamixel(_ID, ADDR_P1_GOAL_POSITION_2BYTES, iPosition)) {
+					this->_cmd = iPosition;
+					return true;
+				}
+				else {
+					ROS_WARN("Couldn't send position command to dynamixel: ID=%d", _ID);
+					usleep(DELAY);
+				}
+			}
+			else {
+				ROS_WARN("Couldn't send velocity command to dynamixel: ID=%d", _ID);
+			}
+		}
+		return false;
 	}
 
 	bool WMDynamixel::publishPosition(ros::Publisher pub) {
@@ -84,8 +103,6 @@ namespace wm_dynamixel {
 			bool dxl_error = false;
 			std_msgs::Float64MultiArray msg;
 
-			//test watchdog
-			watchdogMgr();
 			msg.data.push_back((double) _ID);
 			usleep(DELAY);
 			double rawPosition = read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error);
@@ -108,12 +125,7 @@ namespace wm_dynamixel {
 		return true;
 	}
 
-	int WMDynamixel::getID() {
-		return _ID;
-	}
-
-	void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio,
-	                                  int maxSpeed) {
+	void WMDynamixel::updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed) {
 		_ID = Id;
 		_isEnable = false;
 		_offset = offset;
@@ -148,6 +160,20 @@ namespace wm_dynamixel {
 			return true;
 		}
 		return false;
+	}
+
+	double WMDynamixel::Mod(double A, double N) {
+		return A - floor(A / N) * N;
+	}
+
+	double WMDynamixel::AngleProxy(double A1, double A2) {  // Give the smallest difference between two angles in rad
+		A1 = A2 - A1;
+		A1 = Mod(A1 + M_PI, 2 * M_PI) - M_PI;
+		return A1;
+	}
+
+	int WMDynamixel::getID() {
+		return this->_ID;
 	}
 
 	int WMDynamixel::getMode(){
