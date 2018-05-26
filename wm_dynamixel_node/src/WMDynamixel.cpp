@@ -52,7 +52,7 @@ namespace wm_dynamixel {
 			iVelocity = 1023 - iVelocity;
 		}
 
-		if(iVelocity == this->_cmd) return true;
+		if((iVelocity - this->_cmd) < 0.05 && (iVelocity - this->_cmd) > -0.05) return true;
 
 		for (int iTry = 0; iTry < 10; iTry++) {
 			if (write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
@@ -77,7 +77,7 @@ namespace wm_dynamixel {
 			iPosition -= _resolution;
 		}
 
-		if(iPosition == this->_cmd) return true;
+		if(iPosition - this->_cmd < 0.05 && iPosition - this->_cmd > -0.05) return true;
 
 		for (int iTry = 0; iTry < 10; iTry++) {
 			if(write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, (int) _maxSpeed)){

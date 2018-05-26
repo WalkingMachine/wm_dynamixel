@@ -9,7 +9,7 @@
 #include <ctime>
 #include <cmath>
 
-#define DELAY 10000		//us
+#define DELAY 400		//us
 #define WATCHDOG 100000	//us
 
 namespace wm_dynamixel {
