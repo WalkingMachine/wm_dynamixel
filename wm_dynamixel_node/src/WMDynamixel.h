@@ -9,7 +9,7 @@
 #include <ctime>
 #include <cmath>
 
-#define DELAY 10000		//us
+#define DELAY 400		//us
 #define WATCHDOG 100000	//us
 
 namespace wm_dynamixel {
@@ -31,7 +31,6 @@ namespace wm_dynamixel {
 		 */
 		void
 		updateDynamixel(int Id, double offset, int resolution, int direction, int mode, double ratio, int maxSpeed);
-
 
 		/**
 		 * Send a new velocity to the dynamixel (in Rad/s)
@@ -59,11 +58,13 @@ namespace wm_dynamixel {
 		 */
 		int getID();
 
-		// int control mode ( 0=velocity, 1=position )
-		int _mode;
+		int getMode();
 
-		// command
-		double _cmd;
+		double getCmd();
+
+		void setMode(int mode);
+
+		void setCmd(double cmd);
 
 	private:
 		//id of material dynamixel
@@ -88,26 +89,21 @@ namespace wm_dynamixel {
 		//initialise dynamixel speed to 0 and toggle torque
 		void initDynamixel();
 
-		//test if watchdog is
-		bool watchdogMgr();
-
 		// special gear ratio
 		double _ratio;
 
 		// Max rotational speed from 0 to 1023 (dynamixel speed units)
 		double _maxSpeed;
 
-		double Mod(double A, double N) {
-			return A - floor(A / N) * N;
-		}
+		// int control mode ( 0=velocity, 1=position )
+		int _mode;
 
-		double AngleProxy(double A1 = 0, double A2 = 0) {  // Give the smallest difference between two angles in rad
-			A1 = A2 - A1;
-			A1 = Mod(A1 + M_PI, 2 * M_PI) - M_PI;
-			return A1;
-		}
+		// command
+		double _cmd;
 
+		double Mod(double A, double N);
 
+		double AngleProxy(double A1 = 0, double A2 = 0);
 	};
 
 }

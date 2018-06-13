@@ -47,18 +47,14 @@ namespace wm_dynamixel {
 		}
 
 		//initialise ros service for data reading and writing
-		ros::ServiceServer service_read = dynamixelHandler.advertiseService("dynamixel/read_addr",
-		                                                                    wm_dynamixel::Read_Data_Dynamixel);
-		ros::ServiceServer service_write = dynamixelHandler.advertiseService("dynamixel/write_addr",
-		                                                                     wm_dynamixel::Write_Data_Dynamixel);
+		ros::ServiceServer service_read = dynamixelHandler.advertiseService("dynamixel/read_addr", wm_dynamixel::Read_Data_Dynamixel);
+		ros::ServiceServer service_write = dynamixelHandler.advertiseService("dynamixel/write_addr", wm_dynamixel::Write_Data_Dynamixel);
 
 		//initialise ros subscriber for commands
-		ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10,
-		                                                                 wm_dynamixel::UpdateVelocity);
+		ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, wm_dynamixel::UpdateVelocity);
 
 		//initialise ros subscriber for initialisations
-		ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10,
-		                                                                    wm_dynamixel::addDynamixel);
+		ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, wm_dynamixel::addDynamixel);
 
 		//initialise ros publisher for data feedback
 		wm_dynamixel::dynamixelPublisher = dynamixelHandler.advertise<std_msgs::Float64MultiArray>("dynamixel_pos", 10);
@@ -71,17 +67,12 @@ namespace wm_dynamixel {
 
 	void nodeLoop() {
 		ros::Rate loop_rate(10);
-		int iCount = 0;
 		ROS_INFO("Going in node loop.");
 		while (ros::ok()) {
 			ros::spinOnce();
-			WriteVelocity();
-
 			for (auto &index : dynamixelArray) {
 				index.publishPosition(dynamixelPublisher);
 			}
-
-			iCount++;
 			loop_rate.sleep();
 		}
 	}
@@ -90,18 +81,12 @@ namespace wm_dynamixel {
 		auto ID = (int) msg->data[0];
 		for (auto &index : dynamixelArray) {
 			if (index.getID() == ID) {
-				index._cmd = msg->data[1];
+				if (index.getMode() == 0) {
+					index.setVelocity(msg->data[1]);
+				} else if (index.getMode() == 1) {
+					index.setPosition(msg->data[1]);
+				}
 				break;
-			}
-		}
-	}
-
-	void WriteVelocity() {
-		for (auto &index : dynamixelArray) {
-			if (index._mode == 0) {
-				index.setVelocity(index._cmd);
-			} else if (index._mode == 1) {
-				index.setPosition(index._cmd);
 			}
 		}
 	}
