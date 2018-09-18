@@ -1,8 +1,11 @@
 <library path="lib/libwm_dynamixel_hardware_interface">
-    <class name="wm_dynamixel_hardware_interface/WMDynamixelHardwareInterface" type="wm_dynamixel_hardware_interface::WMDynamixelHardwareInterface" base_class_type="hardware_interface::RobotHW">
+    <class 
+        name="wm_dynamixel_hardware_interface/WMDynamixelHardwareInterface" 
+        type="wm_dynamixel_hardware_interface::WMDynamixelHardwareInterface" 
+        base_class_type="hardware_interface::RobotHW">
+
         <description>
             Walking Machine dynamixel hw.
         </description>
     </class>
-
 </library>

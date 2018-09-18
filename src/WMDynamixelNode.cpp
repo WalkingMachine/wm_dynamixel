@@ -37,8 +37,7 @@ namespace wm_dynamixel {
 				ROS_ERROR("Error initialising RS485 port (Try %i/%i). Process will finish.\n", NBR_OF_TRY, NBR_OF_TRY);
 				return 1;
 			} else if (!bInitialised) {
-				ROS_ERROR("Error initialising RS485 port (Try %i/%i). Waiting 5 seconds until try again.\n", iTry,
-				          NBR_OF_TRY);
+				ROS_ERROR("Error initialising RS485 port (Try %i/%i). Waiting 5 seconds until try again.\n", iTry, NBR_OF_TRY);
 				sleep(5);
 			} else {
 				ROS_INFO("RS485 Initialised on %s with %i bauds!", tty.c_str(), iBaud);
@@ -169,8 +168,7 @@ namespace wm_dynamixel {
 		uint8_t dxl_error = 0;
 		*returnError = false;
 		// Read present position
-		dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, (uint8_t) ID, (uint16_t) iAddress, &returnValue,
-		                                               &dxl_error);
+		dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, (uint8_t) ID, (uint16_t) iAddress, &returnValue, &dxl_error);
 		if (dxl_comm_result != COMM_SUCCESS) {
 			packetHandler->printTxRxResult(dxl_comm_result);
 			*returnError = true;
@@ -255,8 +253,8 @@ namespace wm_dynamixel {
 		return iAddress;
 	}
 
-	bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
-	                         wm_dynamixel_node::ReadDataDynamixel::Response &res) {
+	bool Read_Data_Dynamixel(wm_dynamixel_hardware_interface::ReadDataDynamixel::Request &req,
+	                        wm_dynamixel_hardware_interface::ReadDataDynamixel::Response &res) {
 		int dxl_comm_result;
 		uint16_t returnValue16;
 		uint8_t returnValue8;
@@ -281,8 +279,8 @@ namespace wm_dynamixel {
 		return dxl_comm_result == COMM_SUCCESS;
 	}
 
-	bool Write_Data_Dynamixel(wm_dynamixel_node::WriteDataDynamixel::Request &req,
-	                          wm_dynamixel_node::WriteDataDynamixel::Response &res) {
+	bool Write_Data_Dynamixel(wm_dynamixel_hardware_interface::WriteDataDynamixel::Request &req,
+	                        wm_dynamixel_hardware_interface::WriteDataDynamixel::Response &res) {
 
 		bool bIts2Bytes;
 		uint16_t iAddress = itIsA2BValue((uint16_t) req.address, &bIts2Bytes);

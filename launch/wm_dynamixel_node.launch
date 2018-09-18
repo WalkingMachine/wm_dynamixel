@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <launch>
-    <node name="wm_dynamixel_node" pkg="wm_dynamixel_node" type="wm_dynamixel_node">
+    <node name="wm_dynamixel_node" pkg="wm_dynamixel_hardware_interface" type="wm_dynamixel_hardware_interface">
         <param name="port_name" type="str" value="/dev/dynamixel"/>
         <param name="baud_rate" type="int" value="57600"/>
     </node>

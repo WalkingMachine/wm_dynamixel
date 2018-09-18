@@ -10,8 +10,8 @@
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float64MultiArray.h"
-#include "wm_dynamixel_node/ReadDataDynamixel.h"
-#include "wm_dynamixel_node/WriteDataDynamixel.h"
+#include "wm_dynamixel_hardware_interface/ReadDataDynamixel.h"
+#include "wm_dynamixel_hardware_interface/WriteDataDynamixel.h"
 
 #include "dynamixel_sdk.h"
 
@@ -80,8 +80,8 @@ namespace wm_dynamixel {
 	 * @param res
 	 * @return
 	 */
-	bool Read_Data_Dynamixel(wm_dynamixel_node::ReadDataDynamixel::Request &req,
-	                         wm_dynamixel_node::ReadDataDynamixel::Response &res);
+	bool Read_Data_Dynamixel(wm_dynamixel_hardware_interface::ReadDataDynamixel::Request &req,
+	                        wm_dynamixel_hardware_interface::ReadDataDynamixel::Response &res);
 
 	/**
 	 * Service method
@@ -89,8 +89,8 @@ namespace wm_dynamixel {
 	 * @param res
 	 * @return
 	 */
-	bool Write_Data_Dynamixel(wm_dynamixel_node::WriteDataDynamixel::Request &req,
-	                          wm_dynamixel_node::WriteDataDynamixel::Response &res);
+	bool Write_Data_Dynamixel(wm_dynamixel_hardware_interface::WriteDataDynamixel::Request &req,
+	                        wm_dynamixel_hardware_interface::WriteDataDynamixel::Response &res);
 }
 
 #endif //PROJECT_WMDynamixelNode_H
