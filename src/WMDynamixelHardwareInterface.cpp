@@ -140,4 +140,5 @@ namespace wm_dynamixel_hardware_interface {
 
 
 }
+
 PLUGINLIB_EXPORT_CLASS(wm_dynamixel_hardware_interface::WMDynamixelHardwareInterface, hardware_interface::RobotHW)

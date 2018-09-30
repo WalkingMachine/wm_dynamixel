@@ -72,7 +72,7 @@ roslaunch wm_dynamixel_node wm_dynamixel_node.launch
 ## Configuration YAML
 ```shell
 HARDWARE_NAME:
-  type: wm_dynamixel_hardware_interface/WMDynamixelHardwareInterface
+  type: wm_dynamixel_node/WMDynamixelHardwareInterface
   joints:
     - HARDWARE_NAME
   id: DYNAMIXEL_ID
