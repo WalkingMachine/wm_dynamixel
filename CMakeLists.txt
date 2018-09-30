@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(wm_dynamixel_hardware_interface)
+project(wm_dynamixel_node)
 SET(CMAKE_CXX_STANDARD 11)
 add_definitions(-std=c++11)
 

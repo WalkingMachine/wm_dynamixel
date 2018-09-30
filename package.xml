@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>wm_dynamixel_hardware_interface</name>
+  <name>wm_dynamixel_node</name>
   <version>1.0.0</version>
   <description>The sara_arm package</description>
   <author email="lucas.maurice@outlook.com">Lucas Maurice</author>
