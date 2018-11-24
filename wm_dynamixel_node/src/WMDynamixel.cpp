@@ -79,6 +79,8 @@ namespace wm_dynamixel {
 
 		if(iPosition - this->_cmd < 0.05 && iPosition - this->_cmd > -0.05) return true;
 
+		iPosition = AngleProxy(3.14159, iPosition)+3.14159;
+
 		for (int iTry = 0; iTry < 10; iTry++) {
 			if(write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, (int) _maxSpeed)){
 				usleep(DELAY);
