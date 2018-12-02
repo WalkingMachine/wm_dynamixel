@@ -12,6 +12,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Float64MultiArray.h>
 #include <pluginlib/class_list_macros.h>
+#include "wm_dynamixel_interface.h"
 
 namespace wm_dynamixel_hardware_interface
 {
@@ -19,9 +20,12 @@ namespace wm_dynamixel_hardware_interface
     public:
         // << ---- H I G H   L E V E L   I N T E R F A C E ---- >>
         // Functions
-        virtual bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh);
-        virtual void read(const ros::Time &time, const ros::Duration &period);
-        virtual void write(const ros::Time &time, const ros::Duration &period);
+        bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh);
+        void read(const ros::Time &time, const ros::Duration &period);
+        void write(const ros::Time &time, const ros::Duration &period);
+        //constructeur destructeur
+        WMDynamixelHardwareInterface();
+        ~WMDynamixelHardwareInterface();
 
         // Interface variables
         std::string Name;
@@ -29,29 +33,19 @@ namespace wm_dynamixel_hardware_interface
         double pos;
         double vel;
         double eff;
-        void StatusCB( std_msgs::Float64MultiArrayConstPtr msg );
 
     private:
-        // Variables
+        // Variables d'interface avec ROS_CONTROL
         static hardware_interface::VelocityJointInterface joint_velocity_interface_;
-        static hardware_interface::PositionJointInterface joint_position_interface_;
         static hardware_interface::JointStateInterface joint_state_interface_;
-        //std::string port;
-        ros::NodeHandle nh;
-        ros::Publisher CtrlPub;
-        ros::Publisher InitPub;
-        ros::Subscriber StatSub;
-        std::string Address;
-        int Baud;
-        int Id;
-        double Offset;
-        double resolution;
-        double oldCmd;
-        int direction;
+        DynamixelInterface mDynamixelInterface;
 
-        bool simulation;
-        int mode;
-
+//        int Baud;
+//        int Id;
+//        double Offset;
+//        double resolution;
+//        double oldCmd;
+//        int direction;
     };
 }
 #endif //PROJECT_WMDynamixelHardwareInterface_H

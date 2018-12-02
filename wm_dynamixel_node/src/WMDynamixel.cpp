@@ -110,6 +110,7 @@ namespace wm_dynamixel {
 			newPosition = AngleProxy(0, newPosition);
 			msg.data.push_back(newPosition);
 			if (dxl_error) {
+
 				ROS_WARN("Couldn't read position of dynamixel: ID=%d", _ID);
 				return false;
 			}
