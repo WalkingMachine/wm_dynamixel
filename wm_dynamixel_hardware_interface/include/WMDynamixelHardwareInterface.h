@@ -48,6 +48,7 @@ namespace wm_dynamixel_hardware_interface
         double resolution;
         double oldCmd;
         int direction;
+	int maxSpeed;
 
         bool simulation;
         int mode;

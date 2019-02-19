@@ -52,7 +52,7 @@ namespace wm_dynamixel {
 			iVelocity = 1023 - iVelocity;
 		}
 
-		if((iVelocity - this->_cmd) < 0.05 && (iVelocity - this->_cmd) > -0.05) return true;
+		//if((iVelocity - this->_cmd) < 0.05 && (iVelocity - this->_cmd) > -0.05) return true;
 
 		for (int iTry = 0; iTry < 10; iTry++) {
 			if (write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
@@ -147,7 +147,7 @@ namespace wm_dynamixel {
 
 	double WMDynamixel::AngleProxy(double A1, double A2) {  // Give the smallest difference between two angles in rad
 		A1 = A2 - A1;
-		A1 = Mod(A1 + M_PI, 2 * M_PI) - M_PI;
+		A1 = Mod(A1 + 3.141592654, 2 * 3.141592654) - 3.141592654;
 		return A1;
 	}
 
