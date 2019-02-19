@@ -2,7 +2,7 @@
 
 <launch>
     <node name="wm_dynamixel_node" pkg="wm_dynamixel_node" type="wm_dynamixel_node" output="screen">
-        <param name="port_name" type="str" value="/dev/SARA/dynamixel"/>
+        <param name="port_name" type="str" value="/dev/SARA/motors/dynamixel"/>
         <param name="baud_rate" type="int" value="57600"/>
     </node>
 </launch>
