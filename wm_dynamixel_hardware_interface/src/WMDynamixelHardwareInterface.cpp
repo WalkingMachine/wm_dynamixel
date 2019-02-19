@@ -28,7 +28,7 @@ namespace wm_dynamixel_hardware_interface {
         simulation = false;
         mode = 0;
         double ratio = 1;
-        int maxSpeed = 1023;
+        maxSpeed = 200;
     
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
@@ -114,7 +114,8 @@ namespace wm_dynamixel_hardware_interface {
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
         // Eliminate impossible commands
 
-        if ( cmd > 5 || cmd < -5){ cmd = 0; }
+        if ( cmd > maxSpeed ) cmd = maxSpeed;
+        if ( cmd < -maxSpeed ) cmd = -maxSpeed;
 
         if (!simulation) {
             std_msgs::Float64MultiArray msg;
