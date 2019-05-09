@@ -1,3 +1,9 @@
+# Deprecated, use this instead
+https://github.com/WalkingMachine/dynamixel_control_hw
+
+
+
+
 # Interface matérielle avec les servomoteurs Dynamixel.
 
 Interface entre les servomoteurs Dynamixel et `Ros`, et entre `Ros` et `Roscontrol`. Implémente le contrôle en vélocité des dynamixel. 
